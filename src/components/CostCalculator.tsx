@@ -1,0 +1,207 @@
+import React, { useState, useMemo } from 'react';
+import { Calculator, ShoppingBag, Sliders, CheckCircle2 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { LEATHER_CATALOG } from '../data/leatherCatalog';
+import { TRANSLATIONS } from '../data/translations';
+import { formatPrice, formatNumberOnly } from '../data/formatters';
+
+export const CostCalculator: React.FC = () => {
+  const { language, l, addToCart, setSelectedCustomLeatherId } = useApp();
+  const t = TRANSLATIONS.calculator;
+
+  const [selectedLeatherId, setSelectedLeatherId] = useState<string>('full-grain-cowhide');
+  const [sqftRequired, setSqftRequired] = useState<number>(50);
+  const [addedFeedback, setAddedFeedback] = useState(false);
+
+  const selectedLeather = useMemo(
+    () => LEATHER_CATALOG.find((item) => item.id === selectedLeatherId) || LEATHER_CATALOG[0],
+    [selectedLeatherId]
+  );
+
+  // Simplified Calculation: Total = Sq.ft Price × Required Sq.ft
+  const totalPriceUSD = sqftRequired * selectedLeather.priceUSD;
+  const totalPriceBDT = sqftRequired * selectedLeather.priceBDT;
+
+  const handleAddToCart = () => {
+    addToCart(selectedLeather, sqftRequired, selectedLeather.colors[0]);
+    setAddedFeedback(true);
+    setTimeout(() => setAddedFeedback(false), 2000);
+  };
+
+  const handleCustomInquiry = () => {
+    setSelectedCustomLeatherId(selectedLeather.id);
+    const el = document.getElementById('custom-service');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <section id="calculator" className="w-full py-20 bg-[#FAF6F1]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header - NO B2B text */}
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4B3F35]/10 border border-[#D4AF37]/40 text-[#4B3F35] text-xs font-bold uppercase tracking-wider mb-3">
+            <Calculator className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>{l(t.badge)}</span>
+          </div>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#231F20] tracking-tight">
+            {l(t.title)}
+          </h2>
+          <p className="text-sm sm:text-base text-[#4B3F35]/80 mt-3 font-normal leading-relaxed">
+            {l(t.subtitle)}
+          </p>
+        </div>
+
+        {/* Simplified Calculator Box */}
+        <div className="max-w-4xl mx-auto luxury-card rounded-3xl p-6 sm:p-10 bg-white border border-[#4B3F35]/15 shadow-xl">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            {/* Input Controls */}
+            <div className="space-y-6">
+              
+              {/* 1. Leather Selection */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#4B3F35] mb-2">
+                  {l(t.leatherSelectLabel)}
+                </label>
+                <select
+                  value={selectedLeatherId}
+                  onChange={(e) => {
+                    const newId = e.target.value;
+                    setSelectedLeatherId(newId);
+                    const found = LEATHER_CATALOG.find((item) => item.id === newId);
+                    if (found && sqftRequired < found.moq) {
+                      setSqftRequired(found.moq);
+                    }
+                  }}
+                  className="w-full px-4 py-3.5 rounded-2xl bg-[#FAF6F1] border border-[#4B3F35]/20 text-[#231F20] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
+                >
+                  {LEATHER_CATALOG.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {l(item.name)} — {formatPrice(item.priceUSD, item.priceBDT, language, { perSqft: true, decimals: true })}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 2. Required Sq.Ft Slider & Input */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#4B3F35]">
+                    {l(t.sqftSliderLabel)}
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="number"
+                      min="5"
+                      max="1000"
+                      step="5"
+                      value={sqftRequired}
+                      onChange={(e) => setSqftRequired(Math.max(1, Number(e.target.value)))}
+                      className="w-20 text-center font-bold text-sm bg-[#FAF6F1] border border-[#4B3F35]/20 rounded-lg py-1 px-2 text-[#231F20] focus:outline-none focus:border-[#D4AF37]"
+                    />
+                    <span className="text-xs font-semibold text-[#4B3F35]">
+                      {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}
+                    </span>
+                  </div>
+                </div>
+
+                <input
+                  type="range"
+                  min="10"
+                  max="300"
+                  step="5"
+                  value={sqftRequired}
+                  onChange={(e) => setSqftRequired(Number(e.target.value))}
+                  className="w-full accent-[#D4AF37] cursor-pointer h-2.5 bg-[#4B3F35]/15 rounded-lg mt-2"
+                />
+
+                <div className="flex justify-between text-[11px] text-[#4B3F35]/60 mt-2 font-medium">
+                  <span>10 {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
+                  <span>150 {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
+                  <span>300+ {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
+                </div>
+              </div>
+
+              {/* Unit Rate & MOQ Summary */}
+              <div className="p-4 rounded-2xl bg-[#FAF6F1] border border-[#4B3F35]/10 space-y-2 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#4B3F35] font-medium">{l(t.rateLabel)}:</span>
+                  <span className="font-bold text-[#231F20]">
+                    {formatPrice(selectedLeather.priceUSD, selectedLeather.priceBDT, language, { perSqft: true, decimals: true })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#4B3F35] font-medium">{l(t.moqNotice)}:</span>
+                  <span className="font-bold text-[#D4AF37]">
+                    {formatNumberOnly(selectedLeather.moq, language)} {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Total Output Card */}
+            <div className="p-8 rounded-3xl bg-[#4B3F35] text-[#FAF6F1] shadow-2xl border border-[#D4AF37]/40 flex flex-col justify-between text-center space-y-6">
+              
+              <div>
+                <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold block mb-2">
+                  {l(t.totalPrice)}
+                </span>
+                
+                {/* Big Calculated Price */}
+                <div className="font-heading text-4xl sm:text-5xl font-extrabold text-[#FAF6F1] drop-shadow-sm">
+                  {formatPrice(totalPriceUSD, totalPriceBDT, language, { decimals: true })}
+                </div>
+
+                <p className="text-xs text-stone-300 mt-3 font-normal opacity-90">
+                  {formatNumberOnly(sqftRequired, language)} {language === 'BN' ? 'বর্গফুট' : 'sq.ft'} × {formatPrice(selectedLeather.priceUSD, selectedLeather.priceBDT, language, { perSqft: true, decimals: true })}
+                </p>
+              </div>
+
+              {/* Formula note */}
+              <div className="p-3 rounded-xl bg-black/25 text-[11px] text-stone-300 leading-normal border border-white/10">
+                {l(t.formulaNote)}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs font-bold uppercase tracking-wider text-[#231F20] flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                >
+                  {addedFeedback ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-800" />
+                      <span>{language === 'BN' ? 'ব্যাগে যোগ হয়েছে!' : 'Added to Bag!'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-4 h-4 text-[#231F20]" />
+                      <span>{l(t.addToCartBtn)}</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCustomInquiry}
+                  className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs font-semibold tracking-wide border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>{l(t.customInquiryBtn)}</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  );
+};

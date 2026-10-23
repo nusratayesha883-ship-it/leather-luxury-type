@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-cognac: #4B3F35;
+    --color-cream: #FAF6F1;
+    --color-gold: #D4AF37;
+    --color-charcoal: #231F20;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #FAF6F1;
+    color: #231F20;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #FAF6F1;
+    color: #231F20;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Glassmorphism Navbar for Luxury Cream Theme */
+.glass-nav {
+  background: rgba(250, 246, 241, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(75, 63, 53, 0.12);
+}
+
+/* Luxury card with subtle warm depth and gold glow on hover */
+.luxury-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(75, 63, 53, 0.1);
+  box-shadow: 0 4px 20px -2px rgba(75, 63, 53, 0.05);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 16px 36px -6px rgba(75, 63, 53, 0.12), 0 0 16px rgba(212, 175, 55, 0.15);
+}
+
+/* Gold CTA Button styling */
+.btn-gold {
+  background: linear-gradient(135deg, #D4AF37 0%, #C49F27 100%);
+  color: #231F20;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #E2BF4A 0%, #D4AF37 100%);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+}
+
+/* Cognac Button styling */
+.btn-cognac {
+  background: #4B3F35;
+  color: #FAF6F1;
+  transition: all 0.25s ease;
+}
+
+.btn-cognac:hover {
+  background: #392F27;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(75, 63, 53, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbar styled for warm palette */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF6F1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C8BAAF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4B3F35;
+}
