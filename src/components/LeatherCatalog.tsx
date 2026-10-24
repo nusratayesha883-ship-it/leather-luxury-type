@@ -83,7 +83,7 @@ export const LeatherCatalog: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-5xl xl:max-w-6xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#261A13] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Artisan Tannery Standards</span>
@@ -91,7 +91,7 @@ export const LeatherCatalog: React.FC = () => {
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#FDFBF7] tracking-tight">
             {l(t.title)}
           </h2>
-          <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal leading-relaxed">
+          <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal leading-relaxed lg:whitespace-nowrap">
             {l(t.subtitle)}
           </p>
         </div>

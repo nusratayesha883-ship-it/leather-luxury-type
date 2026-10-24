@@ -28,29 +28,22 @@ export const Header: React.FC = () => {
     }
   };
 
-  const openWhatsApp = () => {
-    const text = language === 'BN' 
-      ? 'হ্যালো LuxeHide Atelier! আমি চামড়া ও কাস্টম সার্ভিস সম্পর্কে জানতে চাই।'
-      : 'Hello LuxeHide Atelier! I would like to inquire regarding bespoke leather supply and custom crafting.';
-    window.open(`https://wa.me/8801700000000?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <header className="sticky top-0 z-40 w-full glass-nav shadow-xs transition-all">
       {/* Full width container across all screen sizes with generous padding */}
-      <div className="w-full px-4 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex items-center justify-between h-20 gap-2 sm:gap-4 min-w-0">
           
           {/* Brand Logo & Subtext in a SINGLE CLEAN LINE */}
           <div 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3.5 cursor-pointer group shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
               <span className="font-heading text-lg font-bold text-[#D4AF37]">L</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
+              <span className="font-heading text-lg sm:text-xl lg:text-2xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
                 {l(TRANSLATIONS.brand.name)}
               </span>
               <span className="hidden xl:inline-block w-px h-4 bg-[#D4AF37]/30" />
@@ -61,7 +54,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Desktop Nav Links (strictly whitespace-nowrap so "Custom Service" never breaks) */}
-          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-medium text-[#E2D7CC] shrink-0">
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 2xl:gap-8 text-xs xl:text-sm font-medium text-[#E2D7CC] shrink">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
@@ -87,18 +80,18 @@ export const Header: React.FC = () => {
               {l(t.calculator)}
             </button>
             <button
-              onClick={() => handleNavClick('trust-strip')}
+              onClick={() => handleNavClick('about')}
               className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
             >
               {l(t.about)}
             </button>
           </nav>
 
-          {/* Right Action Bar */}
-          <div className="flex items-center space-x-3 sm:space-x-4 shrink-0">
+          {/* Right Action Bar - Flexible auto-fitting layout preventing overlap */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 shrink-0">
             
             {/* Desktop Search */}
-            <div className="hidden 2xl:flex items-center relative w-60">
+            <div className="hidden 2xl:flex items-center relative w-56">
               <Search className="w-4 h-4 text-[#D4AF37]/70 absolute left-3 pointer-events-none" />
               <input
                 type="text"
@@ -118,10 +111,10 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Language Switcher: Strict EN / BN */}
-            <div className="inline-flex items-center p-0.5 rounded-full bg-[#221711] border border-[#D4AF37]/30 shadow-inner">
+            <div className="shrink-0 inline-flex items-center p-0.5 rounded-full bg-[#221711] border border-[#D4AF37]/30 shadow-inner">
               <button
                 onClick={() => setLanguage('EN')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
                   language === 'EN'
                     ? 'bg-[#D4AF37] text-[#170F0B] shadow-sm'
                     : 'text-[#D4C5B9] hover:text-[#FDFBF7]'
@@ -132,7 +125,7 @@ export const Header: React.FC = () => {
               </button>
               <button
                 onClick={() => setLanguage('BN')}
-                className={`px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
                   language === 'BN'
                     ? 'bg-[#D4AF37] text-[#170F0B] shadow-sm'
                     : 'text-[#D4C5B9] hover:text-[#FDFBF7]'
@@ -143,20 +136,22 @@ export const Header: React.FC = () => {
               </button>
             </div>
 
-            {/* WhatsApp Concierge Button */}
-            <button
-              onClick={openWhatsApp}
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/35 transition-all cursor-pointer whitespace-nowrap"
-              title="Direct WhatsApp Support"
+            {/* WhatsApp Direct Chat Link (No 'Concierge', connected to 8801905206450) */}
+            <a
+              href="https://wa.me/8801905206450"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/35 transition-all shrink-0 whitespace-nowrap"
+              title="Direct WhatsApp Support: 8801905206450"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20 shrink-0" />
               <span>{l(t.whatsapp)}</span>
-            </button>
+            </a>
 
             {/* Client Portal / Login Trigger */}
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="p-2 rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer shrink-0"
               title={l(t.clientPortal)}
               aria-label="Client Portal"
             >
@@ -167,7 +162,7 @@ export const Header: React.FC = () => {
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 px-3.5 py-2 rounded-full btn-gold cursor-pointer whitespace-nowrap"
+              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 rounded-full btn-gold cursor-pointer whitespace-nowrap shrink-0"
               aria-label="Open Cart Drawer"
             >
               <ShoppingBag className="w-4 h-4 text-[#170F0B]" />
@@ -182,7 +177,7 @@ export const Header: React.FC = () => {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#E2D7CC] hover:text-[#D4AF37]"
+              className="lg:hidden p-1.5 sm:p-2 text-[#E2D7CC] hover:text-[#D4AF37] shrink-0"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -242,7 +237,7 @@ export const Header: React.FC = () => {
                 {l(t.calculator)}
               </button>
               <button
-                onClick={() => handleNavClick('trust-strip')}
+                onClick={() => handleNavClick('about')}
                 className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
               >
                 {l(t.about)}
@@ -250,21 +245,23 @@ export const Header: React.FC = () => {
             </div>
 
             <div className="pt-2 border-t border-[#D4AF37]/20 flex items-center justify-between">
-              <button
-                onClick={openWhatsApp}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold"
+              <a
+                href="https://wa.me/8801905206450"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold shrink-0"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{l(t.whatsapp)}</span>
-              </button>
+              </a>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setIsAuthOpen(true);
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2A1E17] text-[#E2D7CC] border border-[#D4AF37]/30 hover:text-[#D4AF37] text-xs font-semibold"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2A1E17] text-[#E2D7CC] border border-[#D4AF37]/30 hover:text-[#D4AF37] text-xs font-semibold shrink-0"
               >
-                <User className="w-4 h-4" />
+                <User className="w-4 h-4 shrink-0" />
                 <span>{l(t.clientPortal)}</span>
               </button>
             </div>

@@ -14,7 +14,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 4.50,
     priceBDT: 540,
     moq: 50,
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/full-grain-cowhide.jpg',
     description: {
       en: 'Unhindered natural grain cowhide showing authentic epidermal texture, offering unmatched tensile durability and rich aging patina.',
       bn: 'অক্ষত ও প্রাকৃতিক উপরিভাগের সম্পূর্ণ গ্রেইন কাউহাইড। সর্বোচ্চ স্থায়িত্ব ও চমৎকার বয়সের সাথে গাঢ় প্যাটিনার জন্য সুপরিচিত।',
@@ -50,7 +50,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 6.00,
     priceBDT: 720,
     moq: 30,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/italian-calfskin.jpg',
     description: {
       en: 'Ultra-fine pore calfskin imported from Alpine tanneries. Supremely smooth, tight fiber density, favored by bespoke shoemakers and luxury watch strap ateliers.',
       bn: 'আলপাইন ট্যানারি থেকে আমদানিকৃত অতি মসৃণ ও সূক্ষ্ম ছিদ্রযুক্ত বাছুরের চামড়া। বিশ্বমানের জুতো ও লাক্সারি ঘড়ির স্ট্র্যাপের জন্য সর্বাধিক সমাদৃত।',
@@ -85,7 +85,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 5.20,
     priceBDT: 624,
     moq: 40,
-    image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/vegetable-tanned.jpg',
     description: {
       en: 'Pit-tanned for 60 days using natural mimosa and chestnut barks. Chemical-free, firm temper, easily molded, burnished, and carved by hand artisans.',
       bn: 'মিমোসা ও চেস্টনাট গাছের বাকল দিয়ে ৬০ দিন পিট-ট্যানিং করা। কোনো রাসায়নিক ছাড়া তৈরি, কারুকাজ, খোদাই ও মসৃণ বার্নিশিংয়ের জন্য আদর্শ।',
@@ -120,7 +120,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 3.80,
     priceBDT: 456,
     moq: 50,
-    image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/suede-leather.jpg',
     description: {
       en: 'Split-layer leather with buffed nap fibers creating a plush, velvety tactile surface with consistent dye penetration throughout the cross-section.',
       bn: 'ভেলভেট বা মখমলের মতো নরম টেক্সচারযুক্ত সোয়েড লেদার। জুতো, জ্যাকেট এবং বিলাসবহুল চামড়ার অভ্যন্তরীণ লাইনিংয়ের জন্য উপযুক্ত।',
@@ -155,7 +155,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 4.20,
     priceBDT: 504,
     moq: 50,
-    image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/nubuck-leather.jpg',
     description: {
       en: 'Created from top-grain cowhide lightly sanded on the exterior surface to create fine microscopic velvet nap with superior tensile strength compared to split suede.',
       bn: 'টপ-গ্রেইন কাউহাইডের উপরিভাগ আলতোভাবে স্যান্ডিং করে প্রস্তুতকৃত। সোয়েডের চেয়ে অনেক বেশি শক্তিশালী এবং রাজকীয় টেক্সচারযুক্ত।',
@@ -189,7 +189,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 4.00,
     priceBDT: 480,
     moq: 40,
-    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/crazy-horse-leather.jpg',
     description: {
       en: 'Full-grain cowhide infused with specially formulated natural wax. Rubbing alters the tone to produce an instant vintage heritage look that self-heals over time.',
       bn: 'প্রাকৃতিক মোমে নিমজ্জিত ফুল-গ্রেইন কাউহাইড। ঘষা লাগলে রঙের পরিবর্তন হয়ে তাৎক্ষণিক ভিন্টেজ শেড তৈরি করে যা সময়ের সাথে আরও আকর্ষণীয় হয়ে ওঠে।',
@@ -224,7 +224,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 4.50,
     priceBDT: 540,
     moq: 40,
-    image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/pull-up-leather.jpg',
     description: {
       en: 'Aniline dyed and saturated with heavy oils and waxes. When pulled or stretched, lighter undertones burst through, creating a rich dynamic two-tone effect.',
       bn: 'তেল ও মোমে সম্পৃক্ত অ্যানিলিন ডাইড চামড়া। চামড়াটি বাঁকালে বা টানলে ভেতরের উজ্জ্বল আভা ফুটে ওঠে, যা প্রিমিয়াম ডুয়েল-টোন লুক সৃষ্টি করে।',
@@ -258,7 +258,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 3.50,
     priceBDT: 420,
     moq: 60,
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/sheepskin-lambskin.jpg',
     description: {
       en: 'Exceptionally soft and lightweight hide with fine natural grain and supreme flexibility. Ideal for bespoke garment tailoring and luxury glove craft.',
       bn: 'অসাধারণ নরম ও হালকা চামড়া, যার সূক্ষ্ম টেক্সচার এবং অসাধারণ স্থিতিস্থাপকতা রয়েছে। প্রিমিয়াম জ্যাকেট, গ্লাভস ও বিলাসবহুল পোশাকের জন্য অনন্য।',
@@ -292,7 +292,7 @@ export const LEATHER_CATALOG: LeatherItem[] = [
     priceUSD: 5.00,
     priceBDT: 600,
     moq: 30,
-    image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80',
+    image: '/images/leathers/embossed-crocodile-ostrich.jpg',
     description: {
       en: 'High-pressure hydraulic plate-embossed top-grain leather featuring intricate 3D reptilian scales and quill textures with hand-tipping two-tone coloring.',
       bn: 'হাইড্রোলিক প্লেট প্রেসারের মাধ্যমে নিখুঁত থ্রিডি কুমির বা অস্ট্রিচ পাখির টেক্সচার সমৃদ্ধ। দুই রঙের হ্যান্ড-টিপিং ফিনিশ যা রাজকীয় আভিজাত্য এনে দেয়।',

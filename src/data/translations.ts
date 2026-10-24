@@ -10,7 +10,7 @@ export const TRANSLATIONS = {
     calculator: { en: 'Calculator', bn: 'ক্যালকুলেটর' },
     about: { en: 'About Atelier', bn: 'আমাদের কথা' },
     clientPortal: { en: 'Client Portal', bn: 'ক্লায়েন্ট পোর্টাল' },
-    whatsapp: { en: 'WhatsApp Concierge', bn: 'হোয়াটসঅ্যাপ যোগাযোগ' },
+    whatsapp: { en: 'WhatsApp', bn: 'হোয়াটসঅ্যাপ' },
     searchPlaceholder: { en: 'Search 9 premium hides, finishes...', bn: '৯টি প্রিমিয়াম চামড়া ও ফিনিশিং খুঁজুন...' },
     cart: { en: 'Cart', bn: 'কার্ট' },
   },
