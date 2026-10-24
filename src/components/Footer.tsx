@@ -50,6 +50,18 @@ export const Footer: React.FC = () => {
           </p>
         </div>
 
+        {/* Center: Admin Portal link & Tannery Certification */}
+        <div className="flex items-center gap-4 text-xs text-[#A69282]">
+          <a
+            href="#/admin"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1F1510] hover:bg-[#2D1D16] text-[#D4AF37] hover:text-[#FDFBF7] border border-[#D4AF37]/30 transition-all font-semibold"
+            title="Open Atelier Admin Order Dashboard"
+          >
+            <span>Admin Portal</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
+          </a>
+        </div>
+
         {/* Minimalist SVG Social Icons ONLY */}
         <div className="flex items-center space-x-5">
           {socialLinks.map((social) => (

@@ -67,6 +67,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Dynamic Route Normalizer
   const normalizePath = (path: string): string => {
     const lower = (path || '').toLowerCase().trim();
+    if (lower === '/admin' || lower.startsWith('/admin')) {
+      return '/admin';
+    }
     if (lower.startsWith('/catalog/')) {
       const parts = lower.split('/');
       const slug = parts[2] ? parts[2].split('?')[0].split('#')[0] : '';

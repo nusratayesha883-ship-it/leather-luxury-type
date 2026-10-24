@@ -109,3 +109,59 @@ export interface CustomOrderDraft {
   notes?: string;
 }
 
+export type OrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+export interface OrderCustomizationSpecs {
+  colorName: string;
+  customPantone?: string;
+  logoDebossingText?: string;
+  foilOption?: string;
+  thicknessOption?: string;
+  specialNotes?: string;
+}
+
+export interface OrderItemizedCosts {
+  leatherUnitPriceUSD?: number;
+  leatherUnitPriceBDT?: number;
+  baseLeatherUSD: number;
+  baseLeatherBDT: number;
+  customizationFeeUSD: number;
+  customizationFeeBDT: number;
+  deliveryFeeUSD: number;
+  deliveryFeeBDT: number;
+  deliveryRateNote?: string;
+  currencySelected?: string;
+}
+
+export interface OrderRecord {
+  id?: string;
+  order_id: string; // e.g. #LHA-1001
+  customer_name: string;
+  phone: string;
+  email: string;
+  company_name?: string;
+  delivery_address: string;
+  street_address?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  delivery_destination: DeliveryDestination;
+  leather_id: string;
+  leather_name: string;
+  sqft: number;
+  customization_specs: OrderCustomizationSpecs;
+  itemized_costs: OrderItemizedCosts;
+  payment_method: PaymentMethodType;
+  trx_id: string;
+  grand_total_usd: number;
+  grand_total_bdt: number;
+  status: OrderStatus;
+  tracking_number?: string;
+  shipping_carrier?: string;
+  created_at: string;
+  updated_at?: string;
+  synced_to_sheets?: boolean;
+  confirmation_email_sent?: boolean;
+  delivered_email_sent?: boolean;
+}
+

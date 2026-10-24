@@ -110,6 +110,17 @@ export const Header: React.FC = () => {
             >
               {l(t.about)}
             </button>
+            <button
+              onClick={() => navigateTo('/admin')}
+              className={`transition-colors cursor-pointer whitespace-nowrap px-2.5 py-1 rounded-full text-xs border ${
+                currentPath === '/admin'
+                  ? 'bg-[#D4AF37] text-[#170F0B] border-[#D4AF37] font-bold'
+                  : 'text-[#D4AF37] border-[#D4AF37]/35 hover:bg-[#2A1E17] hover:text-[#FDFBF7]'
+              }`}
+              title="Atelier Admin Order Dashboard"
+            >
+              {language === 'BN' ? 'অ্যাডমিন' : 'Admin'}
+            </button>
           </nav>
 
           {/* Right Action Bar - Flexible auto-fitting layout preventing overlap */}
@@ -263,6 +274,16 @@ export const Header: React.FC = () => {
                 className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
               >
                 {l(t.about)}
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigateTo('/admin');
+                }}
+                className="text-left py-2 px-3 rounded-lg bg-[#2A1E17] text-[#D4AF37] hover:text-[#FDFBF7] font-bold whitespace-nowrap flex items-center justify-between"
+              >
+                <span>{language === 'BN' ? 'অ্যাডমিন ড্যাশবোর্ড' : 'Admin Dashboard'}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
               </button>
             </div>
 
