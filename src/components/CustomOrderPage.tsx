@@ -222,15 +222,27 @@ export const CustomOrderPage: React.FC = () => {
         phone: phoneNumber.trim(),
         email: emailAddress.trim(),
         company_name: companyName.trim() || undefined,
+        address: fullAddressString,
         delivery_address: fullAddressString,
         street_address: streetAddress.trim(),
         city: city.trim(),
         postal_code: postalCode.trim() || undefined,
         country: country.trim() || (deliveryDestination === 'domestic' ? 'Bangladesh' : 'International'),
+        country_type: deliveryDestination === 'domestic' ? 'Inside Bangladesh' : 'Outside Bangladesh',
         delivery_destination: deliveryDestination,
+        leather_type: l(selectedLeather.name),
         leather_id: selectedLeather.id,
         leather_name: l(selectedLeather.name),
+        sqft_quantity: sqft,
         sqft,
+        customization_details: {
+          color: selectedColorName,
+          customPantone: customPantone.trim() || undefined,
+          logo_text: customLogoText.trim() || undefined,
+          foilOption,
+          thickness: thicknessOption,
+          specialNotes: specialNotes.trim() || undefined,
+        },
         customization_specs: {
           colorName: selectedColorName,
           customPantone: customPantone.trim() || undefined,
@@ -252,6 +264,7 @@ export const CustomOrderPage: React.FC = () => {
         },
         payment_method: paymentMethod,
         trx_id: paymentNote.trim() || 'Pending advance to 01353091099',
+        grand_total: deliveryDestination === 'domestic' ? grandTotalBDT : grandTotalUSD,
         grand_total_usd: grandTotalUSD,
         grand_total_bdt: grandTotalBDT,
         status: 'Pending',
@@ -337,13 +350,13 @@ export const CustomOrderPage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#170F0B] text-[#FDFBF7] py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Navigation Breadcrumb & Back Button */}
         <div className="flex items-center justify-between gap-4 mb-8">
           <button
             onClick={() => navigateTo('/')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/35 transition-all cursor-pointer shadow-md group"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/35 transition-all cursor-pointer shadow-md group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
             <span>{language === 'BN' ? 'হোম পেজে ফিরে যান' : 'Back to Home / Atelier'}</span>
@@ -366,10 +379,10 @@ export const CustomOrderPage: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{language === 'BN' ? 'বেসপোক ট্যানারি অর্ডার সিস্টেম' : 'Bespoke Tannery Checkout'}</span>
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#FDFBF7] tracking-tight">
+          <h1 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#FDFBF7] tracking-tight break-words">
             {language === 'BN' ? 'কাস্টম লেদার অর্ডার ও চেকআউট' : 'Bespoke Leather Order & Checkout'}
           </h1>
-          <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-[#D4C5B9] mt-3 font-normal max-w-2xl mx-auto leading-relaxed">
             {language === 'BN'
               ? 'চামড়ার ধরণ, পরিমাণ, নির্দিষ্ট কালার শেড, লোগো এমবসিং ও শিপিং তথ্য নির্বাচন করুন। ডানপাশের সামারির সাথে তাৎক্ষণিক সমন্বয় হবে।'
               : 'Select leather hide, footage, custom finishes, and delivery country with instant real-time two-way syncing and transparent cost breakdown.'}
@@ -378,36 +391,36 @@ export const CustomOrderPage: React.FC = () => {
 
         {/* Validation Alert */}
         {validationError && (
-          <div className="max-w-4xl mx-auto mb-8 p-4 rounded-2xl bg-red-950/70 border border-red-500/40 text-red-200 text-sm flex items-center gap-3 shadow-lg">
+          <div className="max-w-4xl mx-auto mb-8 p-4 rounded-2xl bg-red-950/70 border border-red-500/40 text-red-200 text-xs sm:text-sm flex items-center gap-3 shadow-lg">
             <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
             <span>{validationError}</span>
           </div>
         )}
 
-        {/* Main 2-Column Responsive Layout */}
-        <ScrollReveal className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start" stagger={0.12}>
+        {/* Main 2-Column Responsive Layout: Stacked on mobile, 12 cols on tablet & desktop with full track height */}
+        <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-6 lg:gap-8">
           
           {/* LEFT COLUMN: 4 Form Boxes with Two-Way Sync (7 cols) */}
-          <div className="lg:col-span-7 space-y-8">
+          <ScrollReveal className="md:col-span-7 lg:col-span-7 space-y-6 sm:space-y-8" stagger={0.12}>
             
             {/* BOX 1: Leather Type & Customization (Color, Logo/Debossing, Thickness) */}
             <RevealItem>
-              <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+              <div className="luxury-order-box glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
-                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs shrink-0">
                     1
                   </div>
-                  <div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-base sm:text-lg md:text-xl font-bold text-[#FDFBF7] break-words">
                       {language === 'BN' ? 'চামড়ার ধরণ ও কাস্টমাইজেশন' : 'Leather Type & Customization'}
                     </h3>
-                    <p className="text-xs text-[#D4C5B9]">
+                    <p className="text-xs text-[#D4C5B9] mt-0.5 truncate">
                       {language === 'BN' ? 'চামড়া নির্বাচন, নির্দিষ্ট কালার শেড, লোগো ডিবসিং ও স্পেসিফিকেশন' : 'Color, Logo/Debossing, Thickness'}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-5 sm:space-y-6">
                   
                   {/* 1.1 Leather Type Selector (Two-Way Synced) */}
                   <div>
@@ -417,7 +430,7 @@ export const CustomOrderPage: React.FC = () => {
                     <select
                       value={selectedLeatherId}
                       onChange={(e) => handleLeatherChange(e.target.value)}
-                      className="w-full px-4 py-3.5 rounded-2xl bg-[#18100C] border border-[#D4AF37]/30 text-[#FDFBF7] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all shadow-inner"
+                      className="w-full min-h-[44px] px-3.5 sm:px-4 py-2.5 sm:py-3.5 rounded-2xl bg-[#18100C] border border-[#D4AF37]/30 text-[#FDFBF7] text-xs sm:text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all shadow-inner"
                     >
                       {LEATHER_CATALOG.map((item) => (
                         <option key={item.id} value={item.id} className="bg-[#18100C]">
@@ -432,7 +445,7 @@ export const CustomOrderPage: React.FC = () => {
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2.5">
                       {language === 'BN' ? '২. কালার শেড নির্বাচন করুন' : '2. Select Color Shade'}
                     </label>
-                    <div className="flex flex-wrap gap-2.5 mb-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-3">
                       {selectedLeather.colors.map((c) => {
                         const isSelected = selectedColorName === l(c.name);
                         return (
@@ -443,14 +456,14 @@ export const CustomOrderPage: React.FC = () => {
                               setSelectedColorName(l(c.name));
                               setCustomPantone('');
                             }}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
+                            className={`flex items-center gap-2 px-3 py-2 sm:py-2.5 min-h-[44px] rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                               isSelected
                                 ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
                                 : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/20 hover:border-[#D4AF37]/50'
                             }`}
                           >
                             <span
-                              className="w-3.5 h-3.5 rounded-full border border-black/40 shadow-xs"
+                              className="w-3.5 h-3.5 rounded-full border border-black/40 shadow-xs shrink-0"
                               style={{ backgroundColor: c.hex }}
                             />
                             <span>{l(c.name)}</span>
@@ -465,7 +478,7 @@ export const CustomOrderPage: React.FC = () => {
                       value={customPantone}
                       onChange={(e) => setCustomPantone(e.target.value)}
                       placeholder={language === 'BN' ? 'অথবা কাস্টম প্যানটোন কোড লিখুন (যেমন: Pantone 19-1217 TCX)' : 'Or specify bespoke Pantone / Hex (e.g. Pantone 19-1217 TCX)'}
-                      className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
+                      className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
                     />
                   </div>
 
@@ -480,7 +493,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={customLogoText}
                         onChange={(e) => setCustomLogoText(e.target.value)}
                         placeholder={language === 'BN' ? 'যেমন: Atelier Verona 2026' : 'e.g. Atelier Verona 2026'}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
                       />
                     </div>
 
@@ -491,7 +504,7 @@ export const CustomOrderPage: React.FC = () => {
                       <select
                         value={foilOption}
                         onChange={(e) => setFoilOption(e.target.value)}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
                       >
                         <option value="blind" className="bg-[#18100C]">Blind Deboss (Deep Impression)</option>
                         <option value="gold" className="bg-[#18100C]">24k Gold Foil Hot-Stamp</option>
@@ -510,7 +523,7 @@ export const CustomOrderPage: React.FC = () => {
                       <select
                         value={thicknessOption}
                         onChange={(e) => setThicknessOption(e.target.value)}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
                       >
                         <option value="standard" className="bg-[#18100C]">Standard 1.4 - 1.6 mm (Bespoke Goods)</option>
                         <option value="lining" className="bg-[#18100C]">Garment & Lining 0.8 - 1.0 mm (Ultra Supple)</option>
@@ -528,7 +541,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={specialNotes}
                         onChange={(e) => setSpecialNotes(e.target.value)}
                         placeholder={language === 'BN' ? 'যেমন: এজ বার্নিশ উপযোগী, নরম টেম্পার' : 'e.g. Edge burnishable, extra oil pull-up'}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
                       />
                     </div>
                   </div>
@@ -539,16 +552,16 @@ export const CustomOrderPage: React.FC = () => {
 
             {/* BOX 2: Shipping & Address (Full Name, Phone, Full Address, Inside Country / Outside Country selector) */}
             <RevealItem>
-              <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+              <div className="luxury-order-box glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
-                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs shrink-0">
                     2
                   </div>
-                  <div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-base sm:text-lg md:text-xl font-bold text-[#FDFBF7] break-words">
                       {language === 'BN' ? 'শিপিং ও ঠিকানা বিবরণ' : 'Shipping & Address'}
                     </h3>
-                    <p className="text-xs text-[#D4C5B9]">
+                    <p className="text-xs text-[#D4C5B9] mt-0.5 truncate">
                       {language === 'BN' ? 'প্রাপকের যোগাযোগ, ডেলিভারি গন্তব্য ও পূর্ণ ঠিকানা' : 'Full Name, Phone, Full Address, Inside/Outside Country'}
                     </p>
                   </div>
@@ -565,7 +578,7 @@ export const CustomOrderPage: React.FC = () => {
                       {/* Inside Country Option (Displayed in BDT) */}
                       <div
                         onClick={() => handleDestinationChange('domestic')}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative ${
+                        className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer relative min-h-[44px] ${
                           deliveryDestination === 'domestic'
                             ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg'
                             : 'bg-[#18100C] border-[#D4AF37]/20 hover:border-[#D4AF37]/40'
@@ -573,7 +586,7 @@ export const CustomOrderPage: React.FC = () => {
                       >
                         <div className="flex items-start justify-between mb-1.5">
                           <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-[#D4AF37]" />
+                            <Truck className="w-4 h-4 text-[#D4AF37] shrink-0" />
                             <span className="font-bold text-xs sm:text-sm text-[#FDFBF7]">
                               {language === 'BN' ? 'দেশের ভেতরে (বাংলাদেশ)' : 'Inside Country (Bangladesh)'}
                             </span>
@@ -599,7 +612,7 @@ export const CustomOrderPage: React.FC = () => {
                       {/* Outside Country Option (Displayed in USD) */}
                       <div
                         onClick={() => handleDestinationChange('international')}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative ${
+                        className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer relative min-h-[44px] ${
                           deliveryDestination === 'international'
                             ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg'
                             : 'bg-[#18100C] border-[#D4AF37]/20 hover:border-[#D4AF37]/40'
@@ -607,7 +620,7 @@ export const CustomOrderPage: React.FC = () => {
                       >
                         <div className="flex items-start justify-between mb-1.5">
                           <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-[#D4AF37]" />
+                            <Globe className="w-4 h-4 text-[#D4AF37] shrink-0" />
                             <span className="font-bold text-xs sm:text-sm text-[#FDFBF7]">
                               {language === 'BN' ? 'দেশের বাইরে (আন্তর্জাতিক)' : 'Outside Country (International)'}
                             </span>
@@ -646,7 +659,7 @@ export const CustomOrderPage: React.FC = () => {
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder={language === 'BN' ? 'আপনার পূর্ণ নাম' : 'e.g. Tanvir Ahmed'}
-                          className="w-full bg-[#18100C] text-xs text-[#FDFBF7] pl-10 pr-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                          className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                         />
                       </div>
                     </div>
@@ -663,7 +676,7 @@ export const CustomOrderPage: React.FC = () => {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           placeholder={language === 'BN' ? '+880 1XXX-XXXXXX' : '+880 1XXX-XXXXXX / +1 ...'}
-                          className="w-full bg-[#18100C] text-xs text-[#FDFBF7] pl-10 pr-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                          className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                         />
                       </div>
                     </div>
@@ -682,7 +695,7 @@ export const CustomOrderPage: React.FC = () => {
                           value={emailAddress}
                           onChange={(e) => setEmailAddress(e.target.value)}
                           placeholder="atelier@craftstudio.com"
-                          className="w-full bg-[#18100C] text-xs text-[#FDFBF7] pl-10 pr-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                          className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                         />
                       </div>
                     </div>
@@ -698,7 +711,7 @@ export const CustomOrderPage: React.FC = () => {
                           value={companyName}
                           onChange={(e) => setCompanyName(e.target.value)}
                           placeholder={language === 'BN' ? 'ঐচ্ছিক' : 'Optional'}
-                          className="w-full bg-[#18100C] text-xs text-[#FDFBF7] pl-10 pr-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                          className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                         />
                       </div>
                     </div>
@@ -717,7 +730,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={streetAddress}
                         onChange={(e) => setStreetAddress(e.target.value)}
                         placeholder={language === 'BN' ? 'বাড়ি নং, রোড নং, এরিয়া বা এলাকা' : 'House / Suite number, Street name, District'}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] resize-none"
+                        className="w-full min-h-[64px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] pl-10 pr-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] resize-none"
                       />
                     </div>
                   </div>
@@ -734,7 +747,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         placeholder={language === 'BN' ? 'যেমন: ঢাকা / চট্টগ্রাম' : 'e.g. Dhaka, London, Milan'}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                       />
                     </div>
 
@@ -748,7 +761,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={postalCode}
                         onChange={(e) => setPostalCode(e.target.value)}
                         placeholder="1205"
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                       />
                     </div>
 
@@ -761,7 +774,7 @@ export const CustomOrderPage: React.FC = () => {
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         placeholder={deliveryDestination === 'domestic' ? 'Bangladesh' : 'e.g. United Kingdom, USA'}
-                        className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                        className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                       />
                     </div>
                   </div>
@@ -772,16 +785,16 @@ export const CustomOrderPage: React.FC = () => {
 
             {/* BOX 3: Quantity & Sq.Ft Selection (Synced with the right-side summary box) */}
             <RevealItem>
-              <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+              <div className="luxury-order-box glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
-                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs shrink-0">
                     3
                   </div>
-                  <div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-base sm:text-lg md:text-xl font-bold text-[#FDFBF7] break-words">
                       {language === 'BN' ? 'পরিমাণ ও স্কয়ার ফিট নির্ধারণ' : 'Quantity & Sq.Ft Selection'}
                     </h3>
-                    <p className="text-xs text-[#D4C5B9]">
+                    <p className="text-xs text-[#D4C5B9] mt-0.5 truncate">
                       {language === 'BN' ? 'ডানপাশের সারাংশ বক্সের সাথে লাইভ সমন্বয়কৃত' : 'Synced with the right-side summary box'}
                     </p>
                   </div>
@@ -789,8 +802,8 @@ export const CustomOrderPage: React.FC = () => {
 
                 <div className="space-y-5">
                   {/* 3.1 Stepper & Slider */}
-                  <div className="p-5 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/30 space-y-4">
-                    <div className="flex justify-between items-center text-xs font-bold text-[#D4AF37]">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/30 space-y-4">
+                    <div className="flex flex-wrap justify-between items-center gap-2 text-xs font-bold text-[#D4AF37]">
                       <span className="uppercase tracking-wider">
                         {language === 'BN' ? 'প্রয়োজনীয় চামড়ার পরিমাণ (বর্গফুট) *' : 'Order Quantity in Square Feet (Sq.Ft) *'}
                       </span>
@@ -799,13 +812,14 @@ export const CustomOrderPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center bg-[#241710] rounded-xl border border-[#D4AF37]/40 px-3 py-2 shrink-0 shadow-inner">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                      <div className="flex items-center justify-between sm:justify-start bg-[#241710] rounded-xl border border-[#D4AF37]/40 px-2 sm:px-3 py-1.5 shrink-0 shadow-inner min-h-[44px]">
                         <button
                           type="button"
                           onClick={() => handleSqftChange(Math.max(selectedLeather.moq, sqft - 10))}
-                          className="p-1 text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer transition-colors"
+                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer transition-colors"
                           title="Decrease by 10 sq.ft"
+                          aria-label="Decrease quantity"
                         >
                           <Minus className="w-4 h-4" />
                         </button>
@@ -815,13 +829,14 @@ export const CustomOrderPage: React.FC = () => {
                           max="1000"
                           value={sqft}
                           onChange={(e) => handleSqftChange(Number(e.target.value))}
-                          className="w-16 text-center font-bold text-base bg-transparent text-[#FDFBF7] focus:outline-none"
+                          className="w-16 h-11 text-center font-bold text-base sm:text-lg bg-transparent text-[#FDFBF7] focus:outline-none"
                         />
                         <button
                           type="button"
                           onClick={() => handleSqftChange(sqft + 10)}
-                          className="p-1 text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer transition-colors"
+                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer transition-colors"
                           title="Increase by 10 sq.ft"
+                          aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
@@ -848,14 +863,14 @@ export const CustomOrderPage: React.FC = () => {
 
                   {/* 3.2 Dynamic Calculation Preview */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 flex justify-between items-center">
+                    <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 flex justify-between items-center min-h-[44px]">
                       <span className="text-[#A69282]">{language === 'BN' ? 'চামড়ার মূল হার:' : 'Leather Base Cost:'}</span>
                       <span className="font-bold text-[#FDFBF7]">
                         {formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}
                       </span>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 flex justify-between items-center">
-                      <span className="text-[#A69282]">
+                    <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 flex justify-between items-center min-h-[44px]">
+                      <span className="text-[#A69282] truncate max-w-[170px]">
                         {deliveryDestination === 'domestic' ? (language === 'BN' ? 'ডেলিভারি চার্জ (বাংলাদেশ):' : 'Delivery Charge (Domestic):') : (language === 'BN' ? 'এয়ার ফ্রেইট চার্জ:' : 'Air Freight Charge:')}
                       </span>
                       <span className="font-bold text-[#E5C365]">
@@ -879,17 +894,17 @@ export const CustomOrderPage: React.FC = () => {
 
             {/* BOX 4: Payment Instructions & TrxID (bKash/Nagad number 01353091099, Payment Method selector, optional TrxID field) */}
             <RevealItem>
-              <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+              <div className="luxury-order-box glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
-                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs shrink-0">
                     4
                   </div>
-                  <div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-base sm:text-lg md:text-xl font-bold text-[#FDFBF7] break-words">
                       {language === 'BN' ? 'পেমেন্ট নির্দেশিকা ও ট্রানজ্যাকশন আইডি (TrxID)' : 'Payment Instructions & TrxID'}
                     </h3>
-                    <p className="text-xs text-[#D4C5B9]">
-                      {language === 'BN' ? 'অফিশিয়াল বিকাশ ও নগদ নম্বর: 01353091099' : 'bKash/Nagad 01353091099, Payment Method selector, TrxID'}
+                    <p className="text-xs text-[#D4C5B9] mt-0.5 truncate">
+                      {language === 'BN' ? 'অফিশিয়াল বিকাশ ও নগদ নম্বর: 01353091099, পেমেন্ট মাধ্যম ও ঐচ্ছিক TrxID' : 'bKash/Nagad 01353091099, Payment Method selector, optional TrxID field'}
                     </p>
                   </div>
                 </div>
@@ -897,7 +912,7 @@ export const CustomOrderPage: React.FC = () => {
                 <div className="space-y-4">
                   
                   {/* 4 Payment Options Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                     {[
                       { id: 'bkash', label: 'bKash', num: '01353091099' },
                       { id: 'nagad', label: 'Nagad', num: '01353091099' },
@@ -910,7 +925,7 @@ export const CustomOrderPage: React.FC = () => {
                           key={p.id}
                           type="button"
                           onClick={() => setPaymentMethod(p.id as PaymentMethodType)}
-                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between min-h-[56px] ${
                             isSelected
                               ? 'bg-[#322016] border-[#D4AF37] ring-1 ring-[#D4AF37]'
                               : 'bg-[#18100C] border-[#D4AF37]/20 hover:border-[#D4AF37]/40'
@@ -927,7 +942,7 @@ export const CustomOrderPage: React.FC = () => {
                   <div className="p-4 rounded-2xl bg-[#18100C] border border-[#D4AF37]/35 text-xs text-[#D4C5B9] space-y-2">
                     {paymentMethod === 'bkash' && (
                       <div>
-                        <div className="flex items-center gap-2 text-[#E5C365] font-bold mb-1">
+                        <div className="flex flex-wrap items-center gap-2 text-[#E5C365] font-bold mb-1">
                           <span>📱 bKash Official Account:</span>
                           <span className="font-mono text-sm px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#FDFBF7]">
                             01353091099
@@ -943,7 +958,7 @@ export const CustomOrderPage: React.FC = () => {
 
                     {paymentMethod === 'nagad' && (
                       <div>
-                        <div className="flex items-center gap-2 text-[#E5C365] font-bold mb-1">
+                        <div className="flex flex-wrap items-center gap-2 text-[#E5C365] font-bold mb-1">
                           <span>📱 Nagad Official Account:</span>
                           <span className="font-mono text-sm px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#FDFBF7]">
                             01353091099
@@ -987,14 +1002,14 @@ export const CustomOrderPage: React.FC = () => {
                   {/* Payment Note / Transaction ID Input */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                      {language === 'BN' ? 'পেমেন্ট নোট / ট্রানজ্যাকশন আইডি (TrxID) *' : 'Payment Note / Transaction ID (TrxID) *'}
+                      {language === 'BN' ? 'পেমেন্ট নোট / ট্রানজ্যাকশন আইডি (TrxID) (ঐচ্ছিক)' : 'Payment Note / Transaction ID (TrxID) (Optional)'}
                     </label>
                     <input
                       type="text"
                       value={paymentNote}
                       onChange={(e) => setPaymentNote(e.target.value)}
-                      placeholder={language === 'BN' ? 'যেমন: 9B841A02 বা 01353091099 এ বিকাশ করেছি' : 'e.g. TRX9B841029 or "Advance sent via bKash to 01353091099"'}
-                      className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
+                      placeholder={language === 'BN' ? 'যেমন: 9B841A02 বা 01353091099 এ বিকাশ করেছি (ঐচ্ছিক)' : 'e.g. TRX9B841029 or "Advance sent via bKash to 01353091099" (Optional)'}
+                      className="w-full min-h-[44px] bg-[#18100C] text-xs sm:text-sm text-[#FDFBF7] px-4 py-2.5 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                     />
                   </div>
 
@@ -1002,24 +1017,29 @@ export const CustomOrderPage: React.FC = () => {
               </div>
             </RevealItem>
 
-        </div>
+        </ScrollReveal>
 
-        {/* RIGHT COLUMN: Sticky Order Summary Box with 2-Way Synced Controls (5 cols) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
-          
-          <RevealItem>
-            <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
+        {/* RIGHT COLUMN: Full-Height Track with Sticky Locked Order Summary Box (5 cols) */}
+        <div className="md:col-span-5 lg:col-span-5 relative h-full">
+          <div className="sticky top-24 z-20 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              data-lenis-prevent
+              className="luxury-order-box glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-5 sm:space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto"
+            >
               
               <div className="pb-4 border-b border-[#D4AF37]/25 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37] block">
                     {language === 'BN' ? 'লাইভ অর্ডার সারাংশ' : 'Live Order Summary'}
                   </span>
-                  <h3 className="font-heading text-xl font-bold text-[#FDFBF7]">
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
                     {language === 'BN' ? 'স্বয়ংক্রিয় সমন্বয় হিসাব' : 'Two-Way Synced Overview'}
                   </h3>
                 </div>
-                <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
+                <ShieldCheck className="w-6 h-6 text-[#D4AF37] shrink-0" />
               </div>
 
               {/* Pre-Filled Product Card with 4:3 Swatch Image */}
@@ -1052,7 +1072,7 @@ export const CustomOrderPage: React.FC = () => {
                 <select
                   value={selectedLeatherId}
                   onChange={(e) => handleLeatherChange(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[#18100C] border border-[#D4AF37]/25 text-xs text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37] font-medium cursor-pointer"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/25 text-xs sm:text-sm text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37] font-medium cursor-pointer"
                 >
                   {LEATHER_CATALOG.map((item) => (
                     <option key={item.id} value={item.id} className="bg-[#18100C]">
@@ -1071,23 +1091,25 @@ export const CustomOrderPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-[#18100C] rounded-xl border border-[#D4AF37]/30 px-3 py-1.5 shrink-0">
+                  <div className="flex items-center bg-[#18100C] rounded-xl border border-[#D4AF37]/30 px-2 sm:px-3 py-1 shrink-0 min-h-[44px]">
                     <button
                       type="button"
                       onClick={() => handleSqftChange(Math.max(selectedLeather.moq, sqft - 10))}
-                      className="p-1 hover:text-[#D4AF37] cursor-pointer"
+                      className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] flex items-center justify-center hover:text-[#D4AF37] cursor-pointer"
+                      aria-label="Decrease quantity"
                     >
-                      <Minus className="w-3.5 h-3.5" />
+                      <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-12 text-center font-bold text-sm text-[#FDFBF7]">
+                    <span className="w-12 text-center font-bold text-sm sm:text-base text-[#FDFBF7]">
                       {sqft}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleSqftChange(sqft + 10)}
-                      className="p-1 hover:text-[#D4AF37] cursor-pointer"
+                      className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] flex items-center justify-center hover:text-[#D4AF37] cursor-pointer"
+                      aria-label="Increase quantity"
                     >
-                      <Plus className="w-3.5 h-3.5" />
+                      <Plus className="w-4 h-4" />
                     </button>
                   </div>
 
@@ -1108,37 +1130,37 @@ export const CustomOrderPage: React.FC = () => {
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] mb-1.5">
                   {language === 'BN' ? 'ডেলিভারি গন্তব্য (বাম পাশের সাথে সিঙ্ক):' : 'Delivery Destination (Synced):'}
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => handleDestinationChange('domestic')}
-                    className={`py-2 px-2.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
+                    className={`py-2.5 px-3 min-h-[44px] rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
                       deliveryDestination === 'domestic'
                         ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
                         : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/25 hover:border-[#D4AF37]/50'
                     }`}
                   >
-                    <Truck className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <Truck className="w-4 h-4 text-[#D4AF37] shrink-0" />
                     <span>Inside Country (৳10/sqft)</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleDestinationChange('international')}
-                    className={`py-2 px-2.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
+                    className={`py-2.5 px-3 min-h-[44px] rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
                       deliveryDestination === 'international'
                         ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
                         : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/25 hover:border-[#D4AF37]/50'
                     }`}
                   >
-                    <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <Globe className="w-4 h-4 text-[#D4AF37] shrink-0" />
                     <span>Outside Country ($1.50/sqft)</span>
                   </button>
                 </div>
               </div>
 
               {/* Live Specs Badges from Left Form */}
-              <div className="p-3 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 space-y-1.5 text-[11px]">
+              <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 space-y-1.5 text-[11px]">
                 <div className="flex justify-between">
                   <span className="text-[#A69282]">{language === 'BN' ? 'নির্বাচিত শেড:' : 'Color Shade:'}</span>
                   <span className="font-semibold text-[#FDFBF7]">{customPantone ? `${selectedColorName} (${customPantone})` : selectedColorName}</span>
@@ -1222,7 +1244,7 @@ export const CustomOrderPage: React.FC = () => {
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleSendOrder}
-                  className={`w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all transform active:scale-98 ${
+                  className={`w-full py-4 px-6 min-h-[50px] rounded-2xl btn-gold text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all transform active:scale-98 ${
                     isSubmitting ? 'opacity-80 cursor-wait' : ''
                   }`}
                 >
@@ -1245,28 +1267,28 @@ export const CustomOrderPage: React.FC = () => {
                     : '🔒 "Send Order" saves order to Supabase orders table, syncs with Google Sheets webhook, dispatches confirmation email, and opens WhatsApp.'}
                 </p>
               </div>
+          </motion.div>
 
-            </div>
-          </RevealItem>
+          </div>
 
         </div>
 
-      </ScrollReveal>
+      </div>
 
     </div>
 
       {/* Confirmation Receipt Modal upon Submission */}
       <AnimatePresence>
         {submittedOrder && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-xl luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border-2 border-[#D4AF37]/50 shadow-2xl text-center space-y-5 my-8"
+              className="w-full max-w-xl luxury-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 bg-[#221610] border-2 border-[#D4AF37]/50 shadow-2xl text-center space-y-4 sm:space-y-5 my-6 sm:my-8 max-h-[90vh] overflow-y-auto"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400">
-                <CheckCircle2 className="w-8 h-8" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400">
+                <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
               </div>
 
               <div>
@@ -1274,7 +1296,7 @@ export const CustomOrderPage: React.FC = () => {
                   <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                   <span>Status: Pending</span>
                 </div>
-                <h3 className="font-heading text-2xl font-bold text-[#FDFBF7] mt-1">
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#FDFBF7] mt-1 break-words">
                   {language === 'BN' ? 'অর্ডার সফলভাবে নিবন্ধিত ও সংযুক্ত!' : 'Bespoke Order Dispatched & Registered!'}
                 </h3>
                 <p className="text-xs text-[#D4C5B9] mt-2 leading-relaxed">
@@ -1285,7 +1307,7 @@ export const CustomOrderPage: React.FC = () => {
               </div>
 
               {/* Order Details Summary Box */}
-              <div className="p-4 rounded-2xl bg-[#18100C] border border-[#D4AF37]/25 text-xs text-left space-y-2">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#18100C] border border-[#D4AF37]/25 text-xs text-left space-y-2">
                 <div className="flex justify-between items-center pb-2 border-b border-[#D4AF37]/15">
                   <span className="text-[#A69282]">Order ID:</span>
                   <div className="flex items-center gap-2">
@@ -1297,20 +1319,21 @@ export const CustomOrderPage: React.FC = () => {
                         setCopiedOrderId(true);
                         setTimeout(() => setCopiedOrderId(false), 2000);
                       }}
-                      className="p-1 rounded bg-[#2A1E17] hover:bg-[#38281E] text-[#D4AF37] text-[10px] cursor-pointer"
+                      className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded bg-[#2A1E17] hover:bg-[#38281E] text-[#D4AF37] text-[10px] cursor-pointer"
                       title="Copy Order ID"
+                      aria-label="Copy Order ID"
                     >
-                      {copiedOrderId ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      {copiedOrderId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#A69282]">Customer Name:</span>
-                  <span className="font-bold text-[#FDFBF7]">{submittedOrder.fullName}</span>
+                  <span className="font-bold text-[#FDFBF7] truncate max-w-[180px]">{submittedOrder.fullName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#A69282]">Customer Email:</span>
-                  <span className="font-bold text-[#FDFBF7]">{submittedOrder.email}</span>
+                  <span className="font-bold text-[#FDFBF7] truncate max-w-[180px]">{submittedOrder.email}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#A69282]">Leather & Volume:</span>
@@ -1330,35 +1353,35 @@ export const CustomOrderPage: React.FC = () => {
 
               {/* 4 Multi-Channel Sync Status Badges */}
               <div className="grid grid-cols-2 gap-2 text-[11px] text-left">
-                <div className="p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
                   <Database className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-300 block">Supabase Storage</span>
-                    <span className="text-[#A69282] text-[10px]">Saved (Status: Pending)</span>
+                  <div className="min-w-0">
+                    <span className="font-bold text-emerald-300 block truncate">Supabase Storage</span>
+                    <span className="text-[#A69282] text-[10px] truncate block">Saved (Pending)</span>
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
                   <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-300 block">Google Sheets</span>
-                    <span className="text-[#A69282] text-[10px]">Webhook Row Synced</span>
+                  <div className="min-w-0">
+                    <span className="font-bold text-emerald-300 block truncate">Google Sheets</span>
+                    <span className="text-[#A69282] text-[10px] truncate block">Webhook Synced</span>
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-300 block">Confirmation Email</span>
-                    <span className="text-[#A69282] text-[10px]">Receipt Dispatched</span>
+                  <div className="min-w-0">
+                    <span className="font-bold text-emerald-300 block truncate">Confirmation Email</span>
+                    <span className="text-[#A69282] text-[10px] truncate block">Dispatched</span>
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#1D140F] border border-emerald-500/30 flex items-center gap-2">
                   <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-300 block">WhatsApp Direct</span>
-                    <span className="text-[#A69282] text-[10px]">Redirect Opened</span>
+                  <div className="min-w-0">
+                    <span className="font-bold text-emerald-300 block truncate">WhatsApp Direct</span>
+                    <span className="text-[#A69282] text-[10px] truncate block">Redirect Opened</span>
                   </div>
                 </div>
               </div>
@@ -1368,7 +1391,7 @@ export const CustomOrderPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowReceiptEmailModal(true)}
-                  className="w-full py-2.5 px-4 rounded-xl bg-[#2A1E17] hover:bg-[#38281E] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/40 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+                  className="w-full py-3 px-4 min-h-[44px] rounded-xl bg-[#2A1E17] hover:bg-[#38281E] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/40 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
                 >
                   <Eye className="w-4 h-4 text-[#D4AF37]" />
                   <span>Preview Luxury Email Receipt</span>
@@ -1381,7 +1404,7 @@ export const CustomOrderPage: React.FC = () => {
                       setSubmittedOrder(null);
                       navigateTo('/admin');
                     }}
-                    className="flex-1 py-3 px-4 rounded-xl bg-[#18100C] hover:bg-[#2A1E17] text-[#E5C365] text-xs font-bold border border-[#D4AF37]/35 flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-3 px-4 min-h-[44px] rounded-xl bg-[#18100C] hover:bg-[#2A1E17] text-[#E5C365] text-xs font-bold border border-[#D4AF37]/35 flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>View in Admin Dashboard</span>
@@ -1392,7 +1415,7 @@ export const CustomOrderPage: React.FC = () => {
                       setSubmittedOrder(null);
                       navigateTo('/');
                     }}
-                    className="flex-1 py-3 px-4 rounded-xl btn-gold text-xs font-bold uppercase tracking-wider text-[#170F0B] cursor-pointer"
+                    className="flex-1 py-3 px-4 min-h-[44px] rounded-xl btn-gold text-xs font-bold uppercase tracking-wider text-[#170F0B] cursor-pointer"
                   >
                     {language === 'BN' ? 'হোম পেজে ফিরুন' : 'Return to Home'}
                   </button>
@@ -1411,24 +1434,25 @@ export const CustomOrderPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="w-full max-w-4xl h-[88vh] bg-[#1C120D] border-2 border-[#D4AF37]/60 rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+              className="w-full max-w-4xl h-[88vh] bg-[#1C120D] border-2 border-[#D4AF37]/60 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
               {/* Modal Topbar */}
-              <div className="flex items-center justify-between px-6 py-4 bg-[#140D09] border-b border-[#D4AF37]/30">
-                <div className="flex items-center gap-2.5">
-                  <Mail className="w-5 h-5 text-[#D4AF37]" />
-                  <div>
-                    <h4 className="text-sm font-bold text-[#FDFBF7]">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#140D09] border-b border-[#D4AF37]/30 min-h-[52px]">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Mail className="w-5 h-5 text-[#D4AF37] shrink-0" />
+                  <div className="min-w-0">
+                    <h4 className="text-xs sm:text-sm font-bold text-[#FDFBF7] truncate">
                       Order Confirmation Receipt ({submittedOrder.orderId})
                     </h4>
-                    <p className="text-[11px] text-[#A69282]">
+                    <p className="text-[10px] sm:text-[11px] text-[#A69282] truncate">
                       Automated HTML email sent to: <strong className="text-[#E5C365]">{submittedOrder.email}</strong>
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowReceiptEmailModal(false)}
-                  className="p-1.5 rounded-full bg-[#261811] hover:bg-[#382419] text-[#D4C5B9] hover:text-[#FDFBF7] cursor-pointer"
+                  className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-[#261811] hover:bg-[#382419] text-[#D4C5B9] hover:text-[#FDFBF7] cursor-pointer shrink-0 ml-2"
+                  aria-label="Close email receipt preview"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -1444,14 +1468,14 @@ export const CustomOrderPage: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="flex items-center justify-between px-6 py-3 bg-[#140D09] border-t border-[#D4AF37]/30 text-xs">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-[#140D09] border-t border-[#D4AF37]/30 text-xs">
                 <span className="text-[#A69282] hidden sm:inline">
                   Features unique Order ID, leather specs, shipping rate, and bKash/Nagad details (01353091099).
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowReceiptEmailModal(false)}
-                  className="px-5 py-2 rounded-xl btn-gold text-xs font-bold text-[#170F0B] cursor-pointer"
+                  className="px-5 py-2.5 min-h-[44px] rounded-xl btn-gold text-xs font-bold text-[#170F0B] cursor-pointer ml-auto"
                 >
                   Close Receipt
                 </button>

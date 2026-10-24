@@ -19,13 +19,17 @@
     scroll-behavior: smooth;
     background-color: #170F0B;
     color: #FDFBF7;
+    overflow-x: clip;
+    max-width: 100vw;
   }
 
   body {
     font-family: var(--font-body);
     background-color: #170F0B;
     color: #FDFBF7;
-    overflow-x: hidden;
+    overflow-x: clip;
+    max-width: 100vw;
+    width: 100%;
   }
 
   h1, h2, h3, h4, .font-heading {

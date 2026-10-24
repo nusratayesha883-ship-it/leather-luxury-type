@@ -54,12 +54,12 @@ export const CostCalculator: React.FC = () => {
 
         {/* Simplified Calculator Box */}
         <ScrollReveal className="max-w-4xl mx-auto">
-          <div className="luxury-card glass-sheen rounded-3xl p-6 sm:p-10 bg-[#261A13] border border-[#D4AF37]/30 shadow-2xl">
+          <div className="luxury-card glass-sheen rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 bg-[#261A13] border border-[#D4AF37]/30 shadow-2xl">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
             
             {/* Input Controls */}
-            <div className="space-y-6">
+            <div className="space-y-5 sm:space-y-6">
               
               {/* 1. Leather Selection */}
               <div>
@@ -76,7 +76,7 @@ export const CostCalculator: React.FC = () => {
                       setSqftRequired(found.moq);
                     }
                   }}
-                  className="w-full px-4 py-3.5 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/25 text-[#FDFBF7] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
+                  className="w-full min-h-[44px] px-4 py-3 rounded-xl sm:rounded-2xl bg-[#1A110C] border border-[#D4AF37]/25 text-[#FDFBF7] text-xs sm:text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
                 >
                   {LEATHER_CATALOG.map((item) => (
                     <option key={item.id} value={item.id} className="bg-[#1A110C] text-[#FDFBF7]">
@@ -100,7 +100,7 @@ export const CostCalculator: React.FC = () => {
                       step="5"
                       value={sqftRequired}
                       onChange={(e) => setSqftRequired(Math.max(1, Number(e.target.value)))}
-                      className="w-20 text-center font-bold text-sm bg-[#1A110C] border border-[#D4AF37]/25 rounded-lg py-1 px-2 text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37]"
+                      className="w-20 min-h-[38px] text-center font-bold text-xs sm:text-sm bg-[#1A110C] border border-[#D4AF37]/25 rounded-lg py-1.5 px-2 text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37]"
                     />
                     <span className="text-xs font-semibold text-[#D4C5B9]">
                       {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}
@@ -126,7 +126,7 @@ export const CostCalculator: React.FC = () => {
               </div>
 
               {/* Unit Rate & MOQ Summary */}
-              <div className="p-4 rounded-2xl bg-[#1F1510] border border-[#D4AF37]/20 space-y-2 text-xs">
+              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#1F1510] border border-[#D4AF37]/20 space-y-2 text-xs">
                 <div className="flex justify-between items-center">
                   <span className="text-[#D4C5B9] font-medium">{l(t.rateLabel)}:</span>
                   <span className="font-bold text-[#E5C365]">
@@ -144,7 +144,7 @@ export const CostCalculator: React.FC = () => {
             </div>
 
             {/* Total Output Card */}
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-[#38261B] via-[#2D1E16] to-[#20150F] text-[#FDFBF7] shadow-2xl border border-[#D4AF37]/50 flex flex-col justify-between text-center space-y-6">
+            <div className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#38261B] via-[#2D1E16] to-[#20150F] text-[#FDFBF7] shadow-2xl border border-[#D4AF37]/50 flex flex-col justify-between text-center space-y-5 sm:space-y-6">
               
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold block mb-2">
@@ -152,11 +152,11 @@ export const CostCalculator: React.FC = () => {
                 </span>
                 
                 {/* Big Calculated Price */}
-                <div className="font-heading text-4xl sm:text-5xl font-extrabold text-[#FDFBF7] drop-shadow-md">
+                <div className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#FDFBF7] drop-shadow-md break-words">
                   {formatPrice(totalPriceUSD, totalPriceBDT, language, { decimals: true })}
                 </div>
 
-                <p className="text-xs text-[#D4C5B9] mt-3 font-normal opacity-90">
+                <p className="text-xs text-[#D4C5B9] mt-3 font-normal opacity-90 break-words">
                   {formatNumberOnly(sqftRequired, language)} {language === 'BN' ? 'বর্গফুট' : 'sq.ft'} × {formatPrice(selectedLeather.priceUSD, selectedLeather.priceBDT, language, { perSqft: true, decimals: true })}
                 </p>
               </div>
@@ -171,7 +171,7 @@ export const CostCalculator: React.FC = () => {
                 <MagneticButton
                   type="button"
                   onClick={handleProceedToOrder}
-                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.5)] transition-all group"
+                  className="w-full min-h-[48px] py-3.5 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl btn-gold text-xs sm:text-sm font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.5)] transition-all group"
                 >
                   <span>{language === 'BN' ? 'কাস্টম অর্ডারে এগিয়ে যান' : 'Proceed to Custom Order'}</span>
                   <ArrowRight className="w-4 h-4 text-[#170F0B] group-hover:translate-x-1 transition-transform" />
@@ -180,7 +180,7 @@ export const CostCalculator: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full py-3 px-4 rounded-xl bg-[#1F1510] hover:bg-[#2A1E17] text-[#FDFBF7] hover:text-[#D4AF37] text-xs font-semibold tracking-wide border border-[#D4AF37]/35 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full min-h-[44px] py-3 px-4 rounded-xl bg-[#1F1510] hover:bg-[#2A1E17] text-[#FDFBF7] hover:text-[#D4AF37] text-xs font-semibold tracking-wide border border-[#D4AF37]/35 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {addedFeedback ? (
                     <>

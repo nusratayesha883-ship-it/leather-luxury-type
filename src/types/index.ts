@@ -139,6 +139,12 @@ export interface OrderRecord {
   customer_name: string;
   phone: string;
   email: string;
+  address?: string;
+  country_type?: string;
+  leather_type?: string;
+  sqft_quantity?: number;
+  customization_details?: Record<string, any>;
+  grand_total?: number;
   company_name?: string;
   delivery_address: string;
   street_address?: string;
@@ -164,4 +170,5 @@ export interface OrderRecord {
   confirmation_email_sent?: boolean;
   delivered_email_sent?: boolean;
 }
+
 

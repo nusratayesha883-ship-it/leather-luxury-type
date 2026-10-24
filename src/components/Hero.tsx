@@ -52,14 +52,14 @@ export const Hero: React.FC = () => {
       {/* Content Container with generous padding so text never touches top or edges */}
       <motion.div
         style={{ opacity: textOpacity }}
-        className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center flex flex-col items-center py-12"
+        className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 text-center flex flex-col items-center py-10 sm:py-12"
       >
         {/* Luxury Top Tag */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#271B14]/85 backdrop-blur-md border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold tracking-wider uppercase mb-6 shadow-[0_2px_12px_rgba(0,0,0,0.4)]"
+          className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#271B14]/85 backdrop-blur-md border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold tracking-wider uppercase mb-5 sm:mb-6 shadow-[0_2px_12px_rgba(0,0,0,0.4)]"
         >
           <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
           <span>{l(t.badge)}</span>
@@ -70,7 +70,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold text-[#FDFBF7] tracking-tight leading-[1.18] max-w-4xl drop-shadow-lg"
+          className="font-heading text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#FDFBF7] tracking-tight leading-[1.2] max-w-4xl drop-shadow-lg break-words"
         >
           {l(t.h1)}
         </motion.h1>
@@ -80,7 +80,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-[#D4C5B9] text-sm sm:text-base md:text-lg max-w-2xl mt-4 sm:mt-5 font-normal leading-relaxed"
+          className="text-[#D4C5B9] text-xs sm:text-base md:text-lg max-w-2xl mt-3 sm:mt-5 font-normal leading-relaxed break-words"
         >
           {l(t.subheadline)}
         </motion.p>
@@ -90,12 +90,12 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
+          className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3.5 sm:gap-4 w-full sm:w-auto"
         >
           {/* CTA 1: Explore Catalog */}
           <MagneticButton
             onClick={() => scrollToSection('catalog')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold text-sm font-bold tracking-wide shadow-lg"
+            className="w-full sm:w-auto min-h-[46px] px-6 sm:px-8 py-3 sm:py-3.5 rounded-full btn-gold text-xs sm:text-sm font-bold tracking-wide shadow-lg flex items-center justify-center gap-2"
           >
             <span>{l(t.ctaExplore)}</span>
             <ArrowRight className="w-4 h-4 text-[#170F0B]" />
@@ -104,7 +104,7 @@ export const Hero: React.FC = () => {
           {/* CTA 2: Request Custom Service */}
           <MagneticButton
             onClick={() => navigateTo('/custom-order')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#271B14]/85 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] shadow-md"
+            className="w-full sm:w-auto min-h-[46px] px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-[#271B14]/85 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-xs sm:text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] shadow-md flex items-center justify-center gap-2"
           >
             <Sliders className="w-4 h-4 text-[#D4AF37]" />
             <span>{l(t.ctaCustom)}</span>

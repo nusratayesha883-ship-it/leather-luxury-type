@@ -23,6 +23,7 @@ import {
   fetchAllOrders,
   updateRemoteOrderStatus,
   isSupabaseConfigured,
+  subscribeToOrdersRealtime,
   SUPABASE_SQL_SETUP
 } from '../services/supabaseClient';
 import {
@@ -77,6 +78,15 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     loadOrders();
+
+    // Subscribe to real-time order updates from Supabase
+    const unsubscribe = subscribeToOrdersRealtime(() => {
+      loadOrders();
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Filtered Orders

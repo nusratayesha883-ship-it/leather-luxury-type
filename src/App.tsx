@@ -2,7 +2,7 @@ import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { CustomOrderSection } from './components/CustomOrderSection';
+import { TrustBadges } from './components/TrustBadges';
 import { LeatherCatalog } from './components/LeatherCatalog';
 import { CostCalculator } from './components/CostCalculator';
 import { CustomOrderPage } from './components/CustomOrderPage';
@@ -20,7 +20,7 @@ const MainContent: React.FC = () => {
   const { currentPath } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
+    <div className="min-h-screen w-full max-w-full bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
       
       {/* Custom Luxury Atelier Cursor (Fine pointer desktop devices) */}
       <AtelierCursor />
@@ -29,7 +29,7 @@ const MainContent: React.FC = () => {
       <Header />
 
       {/* Main Content: Admin Dashboard OR Dedicated PDP OR Dedicated Custom Order Page OR Home Page */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full pt-20">
         {currentPath === '/admin' ? (
           <AdminDashboard />
         ) : currentPath.startsWith('/catalog/') ? (
@@ -41,13 +41,13 @@ const MainContent: React.FC = () => {
             {/* 2. Hero Section (Full width, dark texture, dual CTAs) */}
             <Hero />
 
-            {/* 3. 4 Main Order / Customization Form Boxes & Real-Time Sync Summary */}
-            <CustomOrderSection />
+            {/* 3. 4 Quality Feature Cards (100% Genuine Tannery Leather, Tiered Wholesale Pricing, ISO Certified Quality, Global & Local Delivery) */}
+            <TrustBadges />
 
             {/* 4. 9 High-Level Leather Catalog (Grid, filters, swatches, tiered pricing) */}
             <LeatherCatalog />
 
-            {/* 5. Dynamic Square Footage & Price Calculator with 'Proceed to Order' */}
+            {/* 5. Dynamic Square Footage & Price Calculator */}
             <CostCalculator />
           </>
         )}

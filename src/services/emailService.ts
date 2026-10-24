@@ -214,10 +214,16 @@ export const generateOrderDeliveredEmailHTML = (order: OrderRecord): string => {
 
     <div class="content">
       <div class="status-badge">STATUS: ${order.status.toUpperCase()}</div>
-      <h2 style="color: #FDFBF7; margin-top: 0;">Your Leather Batch Has Been Dispatched!</h2>
+      <h2 style="color: #FDFBF7; margin-top: 0;">
+        ${order.status === 'Delivered' ? 'Your Bespoke Leather Batch Has Been Delivered!' : 'Your Leather Batch Has Been Dispatched!'}
+      </h2>
       <p style="color: #D4C5B9; font-size: 14px; line-height: 1.6;">
         Dear <strong>${order.customer_name}</strong>,<br>
-        We are delighted to confirm that your bespoke leather commission <strong>${order.order_id}</strong> (${order.leather_name}, ${order.sqft} sq.ft) has completed tannery quality control and is now <strong>${order.status}</strong>.
+        ${
+          order.status === 'Delivered'
+            ? `We are delighted to confirm that your bespoke leather commission <strong>${order.order_id}</strong> (${order.leather_name}, ${order.sqft} sq.ft) has successfully arrived and is now marked as <strong>Delivered</strong>.`
+            : `We are delighted to confirm that your bespoke leather commission <strong>${order.order_id}</strong> (${order.leather_name}, ${order.sqft} sq.ft) has completed tannery quality control and is now <strong>${order.status}</strong>.`
+        }
       </p>
 
       <div class="tracking-box">
@@ -334,7 +340,10 @@ export const sendOrderDeliveredEmail = async (
         body: JSON.stringify({
           from: 'LuxeHide Dispatch <dispatch@luxehide.atelier>',
           to: recipient,
-          subject: `Shipment Update: Order ${order.order_id} is ${order.status}`,
+          subject:
+            order.status === 'Delivered'
+              ? `Delivered: Your Order ${order.order_id} Has Arrived — LuxeHide Atelier`
+              : `Shipment Update: Order ${order.order_id} is ${order.status} — LuxeHide Atelier`,
           html: htmlContent,
         }),
       });

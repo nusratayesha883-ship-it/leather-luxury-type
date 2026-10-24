@@ -257,7 +257,7 @@ export const ProductDetailPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         
         {/* 1. TOP BREADCRUMB & ATELIER NAVIGATION BAR */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#D4AF37]/20">
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pb-6 border-b border-[#D4AF37]/20">
           
           {/* Back to Catalog / Home */}
           <div className="flex items-center gap-3">
@@ -269,7 +269,7 @@ export const ProductDetailPage: React.FC = () => {
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }, 100);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/35 transition-all cursor-pointer shadow-md group"
+              className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4AF37] hover:text-[#FDFBF7] text-xs font-bold border border-[#D4AF37]/35 transition-all cursor-pointer shadow-md group"
             >
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
               <span>{language === 'BN' ? 'ক্যাটালগে ফিরে যান' : 'Back to Catalog'}</span>
@@ -294,7 +294,7 @@ export const ProductDetailPage: React.FC = () => {
                 {language === 'BN' ? 'চামড়া ক্যাটালগ' : 'Catalog'}
               </span>
               <ChevronRight className="w-3 h-3 text-[#D4AF37]/50" />
-              <span className="text-[#D4AF37] font-semibold">
+              <span className="text-[#D4AF37] font-semibold truncate max-w-[160px]">
                 {l(item.name)}
               </span>
             </div>
@@ -308,7 +308,7 @@ export const ProductDetailPage: React.FC = () => {
             <button
               onClick={() => navigateTo('/catalog/' + prevLeather.id)}
               title={l(prevLeather.name)}
-              className="px-3 py-1.5 rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4C5B9] hover:text-[#D4AF37] border border-[#D4AF37]/25 transition-all flex items-center gap-1 cursor-pointer"
+              className="px-3 py-2 min-h-[44px] rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4C5B9] hover:text-[#D4AF37] border border-[#D4AF37]/25 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span className="hidden sm:inline line-clamp-1 max-w-[120px]">{l(prevLeather.name)}</span>
@@ -316,7 +316,7 @@ export const ProductDetailPage: React.FC = () => {
             <button
               onClick={() => navigateTo('/catalog/' + nextLeather.id)}
               title={l(nextLeather.name)}
-              className="px-3 py-1.5 rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4C5B9] hover:text-[#D4AF37] border border-[#D4AF37]/25 transition-all flex items-center gap-1 cursor-pointer"
+              className="px-3 py-2 min-h-[44px] rounded-full bg-[#241710] hover:bg-[#322016] text-[#D4C5B9] hover:text-[#D4AF37] border border-[#D4AF37]/25 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span className="hidden sm:inline line-clamp-1 max-w-[120px]">{l(nextLeather.name)}</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Thumbnail Navigation Strip (3 to 4 crisp images) */}
-            <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-4 gap-2.5 sm:gap-4">
               {gallery.map((img, idx) => {
                 const isActive = activeImageIndex === idx;
                 return (
@@ -382,7 +382,7 @@ export const ProductDetailPage: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative aspect-[4/3] rounded-2xl overflow-hidden border-2 transition-all cursor-pointer group/thumb ${
+                    className={`relative aspect-[4/3] min-h-[44px] rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all cursor-pointer group/thumb ${
                       isActive
                         ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/60 shadow-[0_0_15px_rgba(212,175,55,0.4)] scale-102'
                         : 'border-[#D4AF37]/20 hover:border-[#D4AF37]/60 opacity-70 hover:opacity-100'
@@ -432,17 +432,17 @@ export const ProductDetailPage: React.FC = () => {
                 <span>{l(item.category)}</span>
               </div>
 
-              <h1 className="font-heading text-3xl sm:text-4xl xl:text-5xl font-extrabold text-[#FDFBF7] tracking-tight leading-tight">
+              <h1 className="font-heading text-2xl sm:text-4xl xl:text-5xl font-extrabold text-[#FDFBF7] tracking-tight leading-tight break-words">
                 {l(item.name)}
               </h1>
 
-              <p className="text-sm text-[#D4C5B9] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#D4C5B9] leading-relaxed">
                 {l(item.description)}
               </p>
 
               {/* Price Display */}
-              <div className="pt-2 flex items-baseline gap-3">
-                <span className="font-heading text-3xl sm:text-4xl font-extrabold text-[#E5C365]">
+              <div className="pt-2 flex flex-wrap items-baseline gap-2 sm:gap-3">
+                <span className="font-heading text-2xl sm:text-4xl font-extrabold text-[#E5C365] break-words">
                   {formatPrice(item.priceUSD, item.priceBDT, language, { perSqft: true, decimals: true })}
                 </span>
                 <span className="text-xs text-[#A69282] uppercase tracking-wider font-semibold">
@@ -460,7 +460,7 @@ export const ProductDetailPage: React.FC = () => {
                 </span>
               </label>
 
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 {item.colors.map((c) => {
                   const isSelected = selectedColor?.code === c.code;
                   return (
@@ -468,7 +468,7 @@ export const ProductDetailPage: React.FC = () => {
                       key={c.code}
                       type="button"
                       onClick={() => setSelectedColor(c)}
-                      className={`px-3 py-2 rounded-2xl border transition-all flex items-center gap-2.5 cursor-pointer ${
+                      className={`px-3 py-2 min-h-[44px] rounded-2xl border transition-all flex items-center gap-2.5 cursor-pointer ${
                         isSelected
                           ? 'bg-[#322016] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-md'
                           : 'bg-[#1E140E] border-[#D4AF37]/25 hover:border-[#D4AF37]/50'
@@ -554,7 +554,7 @@ export const ProductDetailPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="w-full py-3 px-4 rounded-xl bg-[#1A110C] hover:bg-[#251710] text-[#D4C5B9] hover:text-[#FDFBF7] text-xs font-semibold border border-[#D4AF37]/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-3 min-h-[44px] px-4 rounded-xl bg-[#1A110C] hover:bg-[#251710] text-[#D4C5B9] hover:text-[#FDFBF7] text-xs font-semibold border border-[#D4AF37]/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 {addedFeedback ? (
                   <>
@@ -764,10 +764,16 @@ export const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* YouTube Channel Badge */}
-              <div className="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#221610] border border-[#D4AF37]/30 text-xs text-[#E5C365]">
+              <a
+                href="https://youtube.com/@li-asahi-su?si=cLGI4Aq9alBkngG5"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#221610] hover:bg-[#2C1C14] border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 text-xs text-[#E5C365] transition-colors cursor-pointer"
+                title="Visit Official Atelier YouTube Channel"
+              >
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                 <span>Channel: <strong>{item.video.channel}</strong></span>
-              </div>
+              </a>
             </div>
 
             {/* Responsive 16:9 Aspect Ratio Embed Frame with Luxury Gold Trim */}
@@ -782,8 +788,8 @@ export const ProductDetailPage: React.FC = () => {
               />
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#1E130D] border border-[#D4AF37]/20 flex items-center justify-between text-xs text-[#D4C5B9]">
-              <span>
+            <div className="p-4 rounded-2xl bg-[#1E130D] border border-[#D4AF37]/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#D4C5B9]">
+              <span className="leading-relaxed">
                 💡 <strong>{language === 'BN' ? 'কারিগর পরামর্শ:' : 'Atelier Tip:'}</strong>{' '}
                 {language === 'BN'
                   ? 'ভিডিওতে চামড়ার ফ্লেক্সিবিলিটি, পুল-আপ টোন এবং এজ বার্নিশিং বৈশিষ্ট্য গভীরভাবে লক্ষ্য করুন।'
@@ -793,7 +799,7 @@ export const ProductDetailPage: React.FC = () => {
                 href={`https://www.youtube.com/watch?v=${item.video.youtubeId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[#D4AF37] hover:underline shrink-0 ml-4 font-semibold"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl bg-[#2A1B13] hover:bg-[#382419] text-[#D4AF37] hover:underline shrink-0 font-semibold border border-[#D4AF37]/30 transition-all cursor-pointer"
               >
                 <span>{language === 'BN' ? 'ইউটিউবে দেখুন' : 'Watch on YouTube'}</span>
                 <ExternalLink className="w-3 h-3" />

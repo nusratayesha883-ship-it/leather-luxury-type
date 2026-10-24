@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
     },
     {
       name: 'YouTube',
-      url: 'https://youtube.com/@ayesha-ho9ni?si=nfX1swZz41eSLB54',
+      url: 'https://youtube.com/@li-asahi-su?si=cLGI4Aq9alBkngG5',
       svg: (
         <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -54,16 +54,16 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-4 text-xs text-[#A69282]">
           <a
             href="#/admin"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1F1510] hover:bg-[#2D1D16] text-[#D4AF37] hover:text-[#FDFBF7] border border-[#D4AF37]/30 transition-all font-semibold"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-full bg-[#1F1510] hover:bg-[#2D1D16] text-[#D4AF37] hover:text-[#FDFBF7] border border-[#D4AF37]/30 transition-all font-semibold"
             title="Open Atelier Admin Order Dashboard"
           >
             <span>Admin Portal</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
           </a>
         </div>
 
         {/* Minimalist SVG Social Icons ONLY */}
-        <div className="flex items-center space-x-5">
+        <div className="flex items-center space-x-3 sm:space-x-4">
           {socialLinks.map((social) => (
             <a
               key={social.name}
@@ -71,7 +71,7 @@ export const Footer: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={social.name}
-              className="w-10 h-10 rounded-full bg-[#221711] border border-[#D4AF37]/25 flex items-center justify-center text-[#D4C5B9] hover:text-[#D4AF37] hover:border-[#D4AF37] hover:shadow-[0_0_12px_rgba(212,175,55,0.25)] hover:scale-110 shadow-sm transition-all"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#221711] border border-[#D4AF37]/25 flex items-center justify-center text-[#D4C5B9] hover:text-[#D4AF37] hover:border-[#D4AF37] hover:shadow-[0_0_12px_rgba(212,175,55,0.25)] hover:scale-110 shadow-sm transition-all"
             >
               {social.svg}
             </a>

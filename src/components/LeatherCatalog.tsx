@@ -88,10 +88,10 @@ export const LeatherCatalog: React.FC = () => {
           })}
         </div>
 
-        {/* Simplified 9 Leathers Grid: ONLY Image, Title, Base Price per sq.ft, and View Details */}
+        {/* Simplified 9 Leathers Grid: 1 col on mobile, 2 cols on tablet (sm:), 3 cols on desktop (lg:) */}
         <motion.div
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
         >
           <AnimatePresence>
             {filteredLeathers.map((item) => (
@@ -139,22 +139,22 @@ export const LeatherCatalog: React.FC = () => {
                 </div>
 
                 {/* Simplified Card Body: Title, Price & View Details */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="font-heading text-xl font-bold text-[#FDFBF7] group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7] group-hover:text-[#D4AF37] transition-colors line-clamp-1 break-words">
                       {l(item.name)}
                     </h3>
-                    <p className="text-xs text-[#D4C5B9] mt-1 line-clamp-1">
+                    <p className="text-xs text-[#D4C5B9] mt-1 line-clamp-1 leading-normal">
                       {l(item.description)}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-[#D4AF37]/20 flex items-center justify-between">
-                    <div>
+                  <div className="pt-3 border-t border-[#D4AF37]/20 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
                       <span className="text-[10px] uppercase tracking-wider text-[#A69282] block font-semibold">
                         {language === 'BN' ? 'প্রতি বর্গফুট' : 'Base Rate'}
                       </span>
-                      <div className="font-heading text-2xl font-bold text-[#E5C365]">
+                      <div className="font-heading text-xl sm:text-2xl font-bold text-[#E5C365] break-words">
                         {formatPrice(item.priceUSD, item.priceBDT, language, { perSqft: true, decimals: true })}
                       </div>
                     </div>
@@ -166,7 +166,7 @@ export const LeatherCatalog: React.FC = () => {
                         e.stopPropagation();
                         navigateTo('/catalog/' + item.id);
                       }}
-                      className="px-4 py-2.5 rounded-xl btn-gold text-xs font-bold text-[#170F0B] flex items-center gap-1.5 shadow-sm group-hover:shadow-md transition-all cursor-pointer"
+                      className="px-3.5 sm:px-4 py-2.5 min-h-[44px] rounded-xl btn-gold text-xs font-bold text-[#170F0B] flex items-center justify-center gap-1.5 shadow-sm group-hover:shadow-md transition-all cursor-pointer shrink-0"
                     >
                       <Eye className="w-3.5 h-3.5 text-[#170F0B]" />
                       <span>{l(t.viewDetails)}</span>

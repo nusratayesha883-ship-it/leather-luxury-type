@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, Search, User, MessageCircle, X, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
@@ -19,8 +19,46 @@ export const Header: React.FC = () => {
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const t = TRANSLATIONS.nav;
+
+  // Click outside and Escape key listener to smoothly collapse desktop search
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        if (!searchQuery) {
+          setDesktopSearchOpen(false);
+        }
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDesktopSearchOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [searchQuery, setSearchQuery]);
+
+  // Auto-focus search input when expanded
+  useEffect(() => {
+    if (desktopSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [desktopSearchOpen]);
 
   const handleHomeClick = () => {
     setMobileMenuOpen(false);
@@ -54,65 +92,65 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-nav shadow-xs transition-all">
-      {/* Full width container across all screen sizes with generous padding */}
-      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-12">
-        <div className="flex items-center justify-between h-20 gap-2 sm:gap-4 min-w-0">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full glass-nav shadow-md transition-all">
+      {/* Full width container across all screen sizes with adaptive padding */}
+      <div className="w-full px-3 sm:px-4 lg:px-6 xl:px-8 max-w-full">
+        <div className="flex items-center justify-between h-20 gap-2 sm:gap-3 min-w-0">
           
           {/* Brand Logo & Subtext in a SINGLE CLEAN LINE */}
           <div 
             onClick={handleHomeClick}
-            className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
           >
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
               <span className="font-heading text-lg font-bold text-[#D4AF37]">L</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-heading text-lg sm:text-xl lg:text-2xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
+            <div className="flex items-center gap-2.5">
+              <span className="font-heading text-base sm:text-lg lg:text-xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
                 {l(TRANSLATIONS.brand.name)}
               </span>
-              <span className="hidden xl:inline-block w-px h-4 bg-[#D4AF37]/30" />
-              <span className="hidden xl:inline-block text-[11px] uppercase tracking-widest text-[#D4C5B9]/80 font-semibold whitespace-nowrap">
+              <span className="hidden min-[1680px]:inline-block w-px h-4 bg-[#D4AF37]/30" />
+              <span className="hidden min-[1680px]:inline-block text-[11px] uppercase tracking-widest text-[#D4C5B9]/80 font-semibold whitespace-nowrap">
                 {l(TRANSLATIONS.brand.tagline)}
               </span>
             </div>
           </div>
 
-          {/* Desktop Nav Links (strictly whitespace-nowrap so "Custom Service" never breaks) */}
-          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 2xl:gap-8 text-xs xl:text-sm font-medium text-[#E2D7CC] shrink">
+          {/* Desktop Nav Links (Visible on screens >= 1024px (lg:), with zero-overlap layout) */}
+          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-3 2xl:gap-5 text-xs xl:text-sm font-medium text-[#E2D7CC] shrink-0">
             <button
               onClick={handleHomeClick}
-              className={`transition-colors cursor-pointer whitespace-nowrap ${currentPath === '/' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
+              className={`transition-colors cursor-pointer whitespace-nowrap px-1.5 py-1 min-h-[44px] flex items-center ${currentPath === '/' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
             >
               {l(t.home)}
             </button>
             <button
               onClick={() => handleNavClick('catalog')}
-              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
+              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap px-1.5 py-1 min-h-[44px] flex items-center"
             >
               {l(t.catalog)}
             </button>
             <button
               onClick={() => navigateTo('/custom-order')}
-              className={`transition-colors cursor-pointer whitespace-nowrap ${currentPath === '/custom-order' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
+              className={`transition-colors cursor-pointer whitespace-nowrap px-1.5 py-1 min-h-[44px] flex items-center ${currentPath === '/custom-order' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
             >
               {l(t.customService)}
             </button>
             <button
               onClick={() => handleNavClick('calculator')}
-              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
+              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap px-1.5 py-1 min-h-[44px] flex items-center"
             >
               {l(t.calculator)}
             </button>
             <button
               onClick={() => handleNavClick('about')}
-              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
+              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap px-1.5 py-1 min-h-[44px] flex items-center"
             >
               {l(t.about)}
             </button>
             <button
               onClick={() => navigateTo('/admin')}
-              className={`transition-colors cursor-pointer whitespace-nowrap px-2.5 py-1 rounded-full text-xs border ${
+              className={`transition-colors cursor-pointer whitespace-nowrap px-2.5 py-1 min-h-[36px] my-auto rounded-full text-xs border shrink-0 flex items-center ${
                 currentPath === '/admin'
                   ? 'bg-[#D4AF37] text-[#170F0B] border-[#D4AF37] font-bold'
                   : 'text-[#D4AF37] border-[#D4AF37]/35 hover:bg-[#2A1E17] hover:text-[#FDFBF7]'
@@ -123,34 +161,89 @@ export const Header: React.FC = () => {
             </button>
           </nav>
 
-          {/* Right Action Bar - Flexible auto-fitting layout preventing overlap */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 shrink-0">
+          {/* Right Action Bar - Adaptive layout preventing any collision */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
-            {/* Desktop Search */}
-            <div className="hidden 2xl:flex items-center relative w-56">
-              <Search className="w-4 h-4 text-[#D4AF37]/70 absolute left-3 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={l(t.searchPlaceholder)}
-                className="w-full bg-[#221711] text-xs text-[#FDFBF7] pl-9 pr-7 py-2 rounded-full border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] placeholder:text-[#A69282] transition-all"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 text-[#D4C5B9]/60 hover:text-[#FDFBF7]"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
+            {/* Desktop Expandable Luxury Search (Visible on screens >= 1024px (lg:)) */}
+            <div ref={searchContainerRef} className="hidden lg:flex items-center relative">
+              <AnimatePresence initial={false}>
+                {desktopSearchOpen || searchQuery ? (
+                  <motion.div
+                    key="desktop-search-input"
+                    initial={{ width: 38, opacity: 0 }}
+                    animate={{ width: 200, opacity: 1 }}
+                    exit={{ width: 38, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    className="relative flex items-center overflow-hidden"
+                  >
+                    <Search className="w-3.5 h-3.5 text-[#D4AF37]/80 absolute left-3 pointer-events-none" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        if (currentPath !== '/') {
+                          navigateTo('/');
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          if (currentPath !== '/') {
+                            navigateTo('/');
+                          }
+                          setTimeout(() => {
+                            document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+                          }, 100);
+                        }
+                      }}
+                      placeholder={l(t.searchPlaceholder)}
+                      className="w-full bg-[#221711] text-xs text-[#FDFBF7] pl-8 pr-7 py-2 rounded-full border border-[#D4AF37]/45 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] placeholder:text-[#A69282] shadow-inner transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setDesktopSearchOpen(false);
+                      }}
+                      className="absolute right-2 text-[#D4C5B9]/60 hover:text-[#FDFBF7] p-0.5 rounded-full hover:bg-[#2A1E17] cursor-pointer"
+                      aria-label="Clear and close search"
+                      title="Close search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.button
+                    key="desktop-search-trigger"
+                    type="button"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
+                    onClick={() => {
+                      setDesktopSearchOpen(true);
+                      if (currentPath !== '/') {
+                        navigateTo('/');
+                        setTimeout(() => {
+                          document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      }
+                    }}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] border border-transparent hover:border-[#D4AF37]/30 transition-all cursor-pointer"
+                    title={l(t.searchPlaceholder)}
+                    aria-label="Open search"
+                  >
+                    <Search className="w-4 h-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Language Switcher: Strict EN / BN */}
+            {/* Language Switcher: Strict EN / BN with 40px+ touch target */}
             <div className="shrink-0 inline-flex items-center p-0.5 rounded-full bg-[#221711] border border-[#D4AF37]/30 shadow-inner">
               <button
                 onClick={() => setLanguage('EN')}
-                className={`px-2 sm:px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1.5 min-h-[38px] sm:min-h-[40px] flex items-center text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                   language === 'EN'
                     ? 'bg-[#D4AF37] text-[#170F0B] shadow-sm'
                     : 'text-[#D4C5B9] hover:text-[#FDFBF7]'
@@ -161,7 +254,7 @@ export const Header: React.FC = () => {
               </button>
               <button
                 onClick={() => setLanguage('BN')}
-                className={`px-2 sm:px-2.5 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1.5 min-h-[38px] sm:min-h-[40px] flex items-center text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                   language === 'BN'
                     ? 'bg-[#D4AF37] text-[#170F0B] shadow-sm'
                     : 'text-[#D4C5B9] hover:text-[#FDFBF7]'
@@ -172,37 +265,37 @@ export const Header: React.FC = () => {
               </button>
             </div>
 
-            {/* WhatsApp Direct Chat Link (No 'Concierge', connected to 8801905206450) */}
+            {/* WhatsApp Direct Chat Link (Visible on sm+, full label on min-[1680px]) */}
             <a
               href="https://wa.me/8801905206450"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/35 transition-all shrink-0 whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 min-h-[40px] rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/35 transition-all shrink-0 whitespace-nowrap"
               title="Direct WhatsApp Support: 8801905206450"
             >
               <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20 shrink-0" />
-              <span>{l(t.whatsapp)}</span>
+              <span className="hidden min-[1680px]:inline">{l(t.whatsapp)}</span>
             </a>
 
-            {/* Client Portal / Login Trigger */}
+            {/* Client Portal / Login Trigger with 44px touch target */}
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="p-1.5 sm:p-2 rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer shrink-0"
+              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer shrink-0"
               title={l(t.clientPortal)}
               aria-label="Client Portal"
             >
-              <User className="w-5 h-5" />
+              <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Cart Trigger with Drawer */}
+            {/* Cart Trigger with Drawer and min-h-[44px] */}
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 rounded-full btn-gold cursor-pointer whitespace-nowrap shrink-0"
+              className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[40px] sm:min-h-[44px] rounded-full btn-gold cursor-pointer whitespace-nowrap shrink-0"
               aria-label="Open Cart Drawer"
             >
               <ShoppingBag className="w-4 h-4 text-[#170F0B]" />
-              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider text-[#170F0B]">
+              <span className="hidden min-[1600px]:inline text-xs font-bold uppercase tracking-wider text-[#170F0B]">
                 {l(t.cart)}
               </span>
               <span className="flex items-center justify-center min-w-[20px] h-5 px-1 text-[11px] font-extrabold bg-[#170F0B] text-[#D4AF37] rounded-full shadow-sm">
@@ -210,10 +303,10 @@ export const Header: React.FC = () => {
               </span>
             </motion.button>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile / Tablet Menu Toggle: Visible on screens < 1024px (lg:hidden) with 44px minimum touch target */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 sm:p-2 text-[#E2D7CC] hover:text-[#D4AF37] shrink-0"
+              className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#E2D7CC] hover:text-[#D4AF37] shrink-0 cursor-pointer rounded-xl hover:bg-[#2A1E17]"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -223,14 +316,14 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Visible on screens < 1024px: lg:hidden) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-[#D4AF37]/20 bg-[#1E140F] px-6 pt-3 pb-6 space-y-3"
+            className="lg:hidden border-t border-[#D4AF37]/20 bg-[#1E140F] px-4 sm:px-6 pt-3 pb-6 space-y-3"
           >
             {/* Mobile Search input */}
             <div className="relative mb-3">
@@ -244,34 +337,37 @@ export const Header: React.FC = () => {
               />
             </div>
 
-            <div className="flex flex-col space-y-2 text-sm font-semibold text-[#FDFBF7]">
+            <div className="flex flex-col space-y-1.5 text-sm font-semibold text-[#FDFBF7]">
               <button
                 onClick={handleHomeClick}
-                className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
+                className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.home)}
               </button>
               <button
                 onClick={() => handleNavClick('catalog')}
-                className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
+                className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.catalog)}
               </button>
               <button
-                onClick={() => handleNavClick('custom-service')}
-                className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigateTo('/custom-order');
+                }}
+                className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.customService)}
               </button>
               <button
                 onClick={() => handleNavClick('calculator')}
-                className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
+                className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.calculator)}
               </button>
               <button
                 onClick={() => handleNavClick('about')}
-                className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
+                className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.about)}
               </button>
@@ -280,19 +376,19 @@ export const Header: React.FC = () => {
                   setMobileMenuOpen(false);
                   navigateTo('/admin');
                 }}
-                className="text-left py-2 px-3 rounded-lg bg-[#2A1E17] text-[#D4AF37] hover:text-[#FDFBF7] font-bold whitespace-nowrap flex items-center justify-between"
+                className="text-left py-2.5 px-3 min-h-[44px] rounded-xl bg-[#2A1E17] text-[#D4AF37] hover:text-[#FDFBF7] font-bold whitespace-nowrap flex items-center justify-between cursor-pointer"
               >
                 <span>{language === 'BN' ? 'অ্যাডমিন ড্যাশবোর্ড' : 'Admin Dashboard'}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
               </button>
             </div>
 
-            <div className="pt-2 border-t border-[#D4AF37]/20 flex items-center justify-between">
+            <div className="pt-2 border-t border-[#D4AF37]/20 flex items-center justify-between gap-3">
               <a
                 href="https://wa.me/8801905206450"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold shrink-0"
+                className="flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold shrink-0 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{l(t.whatsapp)}</span>
@@ -302,7 +398,7 @@ export const Header: React.FC = () => {
                   setMobileMenuOpen(false);
                   setIsAuthOpen(true);
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2A1E17] text-[#E2D7CC] border border-[#D4AF37]/30 hover:text-[#D4AF37] text-xs font-semibold shrink-0"
+                className="flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl bg-[#2A1E17] text-[#E2D7CC] border border-[#D4AF37]/30 hover:text-[#D4AF37] text-xs font-semibold shrink-0 cursor-pointer"
               >
                 <User className="w-4 h-4 shrink-0" />
                 <span>{l(t.clientPortal)}</span>
