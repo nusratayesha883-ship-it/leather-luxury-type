@@ -12,7 +12,7 @@ export const LeatherCatalog: React.FC = () => {
     language,
     l,
     addToCart,
-    setSelectedCustomLeatherId,
+    proceedToCustomOrder,
     searchQuery,
   } = useApp();
 
@@ -70,12 +70,13 @@ export const LeatherCatalog: React.FC = () => {
 
   const handleModalCustomize = () => {
     if (!modalItem) return;
-    setSelectedCustomLeatherId(modalItem.id);
+    proceedToCustomOrder(
+      modalItem.id,
+      modalSqft,
+      modalSqft * modalItem.priceUSD,
+      modalSqft * modalItem.priceBDT
+    );
     setModalItem(null);
-    const formElement = document.getElementById('custom-service');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (

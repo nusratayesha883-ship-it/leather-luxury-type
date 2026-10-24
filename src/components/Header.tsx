@@ -14,14 +14,39 @@ export const Header: React.FC = () => {
     setIsAuthOpen,
     searchQuery,
     setSearchQuery,
+    currentPath,
+    navigateTo,
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const t = TRANSLATIONS.nav;
 
+  const handleHomeClick = () => {
+    setMobileMenuOpen(false);
+    if (currentPath !== '/') {
+      navigateTo('/');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleNavClick = (id: string) => {
     setMobileMenuOpen(false);
+    if (id === 'custom-order' || id === 'custom-service') {
+      navigateTo('/custom-order');
+      return;
+    }
+    if (currentPath !== '/') {
+      navigateTo('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 120);
+      return;
+    }
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -36,7 +61,7 @@ export const Header: React.FC = () => {
           
           {/* Brand Logo & Subtext in a SINGLE CLEAN LINE */}
           <div 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={handleHomeClick}
             className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group shrink-0"
           >
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
@@ -56,8 +81,8 @@ export const Header: React.FC = () => {
           {/* Desktop Nav Links (strictly whitespace-nowrap so "Custom Service" never breaks) */}
           <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 2xl:gap-8 text-xs xl:text-sm font-medium text-[#E2D7CC] shrink">
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
+              onClick={handleHomeClick}
+              className={`transition-colors cursor-pointer whitespace-nowrap ${currentPath === '/' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
             >
               {l(t.home)}
             </button>
@@ -68,8 +93,8 @@ export const Header: React.FC = () => {
               {l(t.catalog)}
             </button>
             <button
-              onClick={() => handleNavClick('custom-service')}
-              className="hover:text-[#D4AF37] transition-colors cursor-pointer whitespace-nowrap"
+              onClick={() => navigateTo('/custom-order')}
+              className={`transition-colors cursor-pointer whitespace-nowrap ${currentPath === '/custom-order' ? 'text-[#D4AF37] font-bold' : 'hover:text-[#D4AF37]'}`}
             >
               {l(t.customService)}
             </button>
@@ -210,10 +235,7 @@ export const Header: React.FC = () => {
 
             <div className="flex flex-col space-y-2 text-sm font-semibold text-[#FDFBF7]">
               <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onClick={handleHomeClick}
                 className="text-left py-2 px-3 rounded-lg hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap"
               >
                 {l(t.home)}

@@ -1,55 +1,66 @@
 import React from 'react';
-import { AppProvider } from './context/AppContext';
+import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { TrustBadges } from './components/TrustBadges';
 import { LeatherCatalog } from './components/LeatherCatalog';
-import { CustomServiceForm } from './components/CustomServiceForm';
 import { CostCalculator } from './components/CostCalculator';
+import { CustomOrderPage } from './components/CustomOrderPage';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 
+const MainContent: React.FC = () => {
+  const { currentPath } = useApp();
+
+  return (
+    <div className="min-h-screen bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
+      
+      {/* 1. Header & Navbar with Language Switcher, Search, Cart & WhatsApp */}
+      <Header />
+
+      {/* Main Content: Dedicated Custom Order Page OR Home Page */}
+      <main className="flex-1">
+        {currentPath === '/custom-order' ? (
+          <CustomOrderPage />
+        ) : (
+          <>
+            {/* 2. Hero Section (Full width, dark texture, dual CTAs) */}
+            <Hero />
+
+            {/* 3. About Atelier & Trust Badges */}
+            <TrustBadges />
+
+            {/* 4. 9 High-Level Leather Catalog (Grid, filters, swatches, tiered pricing) */}
+            <LeatherCatalog />
+
+            {/* 5. Dynamic Square Footage & Price Calculator with 'Proceed to Order' */}
+            <CostCalculator />
+          </>
+        )}
+      </main>
+
+      {/* 6. E-Commerce Essentials: Sliding Cart Drawer */}
+      <CartDrawer />
+
+      {/* 7. Checkout Modal */}
+      <CheckoutModal />
+
+      {/* 8. Client Portal / Auth Modal */}
+      <AuthModal />
+
+      {/* 9. Minimalist Footer */}
+      <Footer />
+
+    </div>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
-        
-        {/* 1. Header & Navbar with Language Switcher, Search, Cart & WhatsApp */}
-        <Header />
-
-        {/* Main Content Sections in Order */}
-        <main className="flex-1">
-          {/* 2. Hero Section (Full width, 60% screen height, dark texture, dual CTAs) */}
-          <Hero />
-
-          {/* 3. Trust Badges (4-item strip) */}
-          <TrustBadges />
-
-          {/* 4. 9 High-Level Leather Catalog (Grid, filters, swatches, tiered pricing, buttons) */}
-          <LeatherCatalog />
-
-          {/* 5. Custom Service & Atelier Form (Pre-filled WhatsApp message) */}
-          <CustomServiceForm />
-
-          {/* 6. Dynamic Cost & Margin Calculator (Interactive sliders & outputs) */}
-          <CostCalculator />
-        </main>
-
-        {/* 7. E-Commerce Essentials: Sliding Cart Drawer (with MOQ warning) */}
-        <CartDrawer />
-
-        {/* 8. Checkout Modal (COD, bKash/Nagad mock, Stripe mock) */}
-        <CheckoutModal />
-
-        {/* 9. Client Portal / Auth Modal */}
-        <AuthModal />
-
-        {/* 10. Minimalist Footer with SVG Social Icons ONLY */}
-        <Footer />
-
-      </div>
+      <MainContent />
     </AppProvider>
   );
 };

@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Calculator, ShoppingBag, Sliders, CheckCircle2 } from 'lucide-react';
+import { Calculator, ShoppingBag, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { LEATHER_CATALOG } from '../data/leatherCatalog';
 import { TRANSLATIONS } from '../data/translations';
 import { formatPrice, formatNumberOnly } from '../data/formatters';
 
 export const CostCalculator: React.FC = () => {
-  const { language, l, addToCart, setSelectedCustomLeatherId } = useApp();
+  const { language, l, addToCart, proceedToCustomOrder } = useApp();
   const t = TRANSLATIONS.calculator;
 
   const [selectedLeatherId, setSelectedLeatherId] = useState<string>('full-grain-cowhide');
@@ -28,10 +28,8 @@ export const CostCalculator: React.FC = () => {
     setTimeout(() => setAddedFeedback(false), 2000);
   };
 
-  const handleCustomInquiry = () => {
-    setSelectedCustomLeatherId(selectedLeather.id);
-    const el = document.getElementById('custom-service');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handleProceedToOrder = () => {
+    proceedToCustomOrder(selectedLeather.id, sqftRequired, totalPriceUSD, totalPriceBDT);
   };
 
   return (
@@ -169,29 +167,29 @@ export const CostCalculator: React.FC = () => {
               <div className="space-y-3 pt-2">
                 <button
                   type="button"
-                  onClick={handleAddToCart}
-                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                  onClick={handleProceedToOrder}
+                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.5)] transition-all group"
                 >
-                  {addedFeedback ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-[#170F0B]" />
-                      <span>{language === 'BN' ? 'ব্যাগে যোগ হয়েছে!' : 'Added to Bag!'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="w-4 h-4 text-[#170F0B]" />
-                      <span>{l(t.addToCartBtn)}</span>
-                    </>
-                  )}
+                  <span>{language === 'BN' ? 'কাস্টম অর্ডারে এগিয়ে যান' : 'Proceed to Custom Order'}</span>
+                  <ArrowRight className="w-4 h-4 text-[#170F0B] group-hover:translate-x-1 transition-transform" />
                 </button>
 
                 <button
                   type="button"
-                  onClick={handleCustomInquiry}
+                  onClick={handleAddToCart}
                   className="w-full py-3 px-4 rounded-xl bg-[#1F1510] hover:bg-[#2A1E17] text-[#FDFBF7] hover:text-[#D4AF37] text-xs font-semibold tracking-wide border border-[#D4AF37]/35 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Sliders className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>{l(t.customInquiryBtn)}</span>
+                  {addedFeedback ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span className="text-emerald-400">{language === 'BN' ? 'ব্যাগে যোগ হয়েছে!' : 'Added to Bag!'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      <span>{l(t.addToCartBtn)}</span>
+                    </>
+                  )}
                 </button>
               </div>
 

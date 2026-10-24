@@ -57,3 +57,20 @@ export interface UserAccount {
   companyName?: string;
   accountType: 'b2b' | 'd2c';
 }
+
+export type DeliveryDestination = 'domestic' | 'international';
+export type PaymentMethodType = 'bkash' | 'nagad' | 'bank' | 'card';
+
+export interface CustomOrderDraft {
+  leatherId: string;
+  sqft: number;
+  totalUSD: number;
+  totalBDT: number;
+  colorName?: string;
+  colorCode?: string;
+  debossingText?: string;
+  foilOption?: string;
+  thickness?: string;
+  notes?: string;
+}
+

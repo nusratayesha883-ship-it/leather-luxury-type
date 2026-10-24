@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 import { TRANSLATIONS } from '../data/translations';
 
 export const Hero: React.FC = () => {
-  const { l } = useApp();
+  const { l, navigateTo } = useApp();
   const t = TRANSLATIONS.hero;
 
   const scrollToSection = (id: string) => {
@@ -85,7 +85,7 @@ export const Hero: React.FC = () => {
 
           {/* CTA 2: Request Custom Service */}
           <button
-            onClick={() => scrollToSection('custom-service')}
+            onClick={() => navigateTo('/custom-order')}
             className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#271B14]/80 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all backdrop-blur-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
           >
             <Sliders className="w-4 h-4 text-[#D4AF37]" />

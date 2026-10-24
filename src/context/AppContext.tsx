@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
-import type { Language, Currency, LeatherItem, CartItem, LeatherColor, LocalizedString } from '../types';
+import React, { createContext, useContext, useState, useMemo, useEffect, type ReactNode } from 'react';
+import type { Language, Currency, LeatherItem, CartItem, LeatherColor, LocalizedString, CustomOrderDraft } from '../types';
 
 interface AppContextType {
   // Language & Currency
@@ -8,6 +8,15 @@ interface AppContextType {
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
   l: (obj: LocalizedString | undefined) => string;
+
+  // Navigation & Routing
+  currentPath: string;
+  navigateTo: (path: string) => void;
+
+  // Custom Order Draft
+  customOrderDraft: CustomOrderDraft;
+  updateCustomOrderDraft: (draft: Partial<CustomOrderDraft>) => void;
+  proceedToCustomOrder: (leatherId: string, sqft: number, totalUSD: number, totalBDT: number) => void;
 
   // Cart Management
   cartItems: CartItem[];
@@ -53,6 +62,80 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const l = (obj: LocalizedString | undefined): string => {
     if (!obj) return '';
     return language === 'BN' ? obj.bn : obj.en;
+  };
+
+  // Client Routing State
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const p = window.location.pathname.toLowerCase();
+      if (p.includes('custom-order') || p.includes('checkout')) {
+        return '/custom-order';
+      }
+    }
+    return '/';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        const p = window.location.pathname.toLowerCase();
+        if (p.includes('custom-order') || p.includes('checkout')) {
+          setCurrentPath('/custom-order');
+        } else {
+          setCurrentPath('/');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (path: string) => {
+    const isCustomOrder = path.includes('custom-order') || path.includes('checkout');
+    const normalized = isCustomOrder ? '/custom-order' : '/';
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', normalized);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setCurrentPath(normalized);
+  };
+
+  // Custom Order Draft State
+  const [customOrderDraft, setCustomOrderDraft] = useState<CustomOrderDraft>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('luxe_custom_order_draft');
+        if (saved) return JSON.parse(saved);
+      } catch {
+        // ignore parse error
+      }
+    }
+    return {
+      leatherId: 'full-grain-cowhide',
+      sqft: 50,
+      totalUSD: 225,
+      totalBDT: 27000,
+    };
+  });
+
+  const updateCustomOrderDraft = (draft: Partial<CustomOrderDraft>) => {
+    setCustomOrderDraft(prev => {
+      const updated = { ...prev, ...draft };
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('luxe_custom_order_draft', JSON.stringify(updated));
+        } catch {
+          // ignore
+        }
+      }
+      return updated;
+    });
+  };
+
+  const proceedToCustomOrder = (leatherId: string, sqft: number, totalUSD: number, totalBDT: number) => {
+    updateCustomOrderDraft({ leatherId, sqft, totalUSD, totalBDT });
+    setSelectedCustomLeatherId(leatherId);
+    navigateTo('/custom-order');
   };
 
   // Cart state
@@ -134,6 +217,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setLanguage,
         toggleLanguage,
         l,
+        currentPath,
+        navigateTo,
+        customOrderDraft,
+        updateCustomOrderDraft,
+        proceedToCustomOrder,
         cartItems,
         addToCart,
         removeFromCart,
