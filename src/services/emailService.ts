@@ -52,7 +52,7 @@ export const generateOrderConfirmationEmailHTML = (order: OrderRecord): string =
     <!-- Atelier Header -->
     <div class="header">
       <div class="logo-badge">L</div>
-      <h1 class="brand-title">LUXEHIDE ATELIER</h1>
+      <h1 class="brand-title">LUXE<span style="color: #D4AF37;">HIDE</span> ATELIER</h1>
       <div class="brand-sub">Bespoke Wholesale Tannery Supply</div>
     </div>
 
@@ -208,7 +208,7 @@ export const generateOrderDeliveredEmailHTML = (order: OrderRecord): string => {
 <body>
   <div class="wrapper">
     <div class="header">
-      <h1 style="color: #FDFBF7; margin: 0; font-size: 24px;">LUXEHIDE ATELIER</h1>
+      <h1 style="color: #FDFBF7; margin: 0; font-size: 24px;">LUXE<span style="color: #D4AF37;">HIDE</span> ATELIER</h1>
       <p style="color: #34D399; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 6px;">Bespoke Leather Shipment Update</p>
     </div>
 

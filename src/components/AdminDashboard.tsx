@@ -220,7 +220,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                 <h1 className="font-heading text-2xl sm:text-3xl font-bold text-[#FDFBF7]">
-                  LuxeHide Atelier — Master Order Management
+                  Luxe<span className="text-[#D4AF37]">Hide</span> Atelier — Master Order Management
                 </h1>
               </div>
               <p className="text-xs text-[#A69282] mt-0.5">

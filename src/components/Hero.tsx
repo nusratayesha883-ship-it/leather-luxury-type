@@ -37,16 +37,16 @@ export const Hero: React.FC = () => {
         className="absolute inset-0 w-full h-full overflow-hidden will-change-transform"
       >
         <img
-          src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=2400&q=85"
+          src="/images/hero-leather-texture.jpg"
           alt="100% Genuine Full-Grain Luxury Leather Hide Texture"
-          loading="lazy"
+          loading="eager"
           className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out"
         />
         
         {/* Deep Luxury Espresso & Cognac Gradient Overlay specifically preserving the genuine leather grain */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#170F0B]/95 via-[#2E1D14]/85 to-[#170F0B]/92" />
-        {/* Subtle radial ambient warmth */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.24)_0%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#170F0B]/88 via-[#2E1D14]/65 to-[#170F0B]/85" />
+        {/* Subtle radial ambient warmth emphasizing the leather grain */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.22)_0%,transparent_75%)]" />
       </motion.div>
 
       {/* Content Container with generous padding so text never touches top or edges */}

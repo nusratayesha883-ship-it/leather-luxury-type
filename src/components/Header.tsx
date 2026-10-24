@@ -100,14 +100,18 @@ export const Header: React.FC = () => {
           {/* Brand Logo & Subtext in a SINGLE CLEAN LINE */}
           <div 
             onClick={handleHomeClick}
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink min-w-0"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
-              <span className="font-heading text-lg font-bold text-[#D4AF37]">L</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#2E2018] flex items-center justify-center border border-[#D4AF37]/60 shadow-md group-hover:border-[#D4AF37] group-hover:shadow-[0_0_12px_rgba(212,175,55,0.3)] transition-all shrink-0">
+              <span className="font-heading text-base sm:text-lg font-bold text-[#D4AF37]">L</span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <span className="font-heading text-base sm:text-lg lg:text-xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
-                {l(TRANSLATIONS.brand.name)}
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-heading text-sm sm:text-base lg:text-xl font-bold tracking-tight text-[#FDFBF7] whitespace-nowrap leading-none">
+                {language === 'BN' ? (
+                  <>লাক্স<span className="text-[#D4AF37]">হাইড</span> অ্যাটেলিয়ার</>
+                ) : (
+                  <>Luxe<span className="text-[#D4AF37]">Hide</span> Atelier</>
+                )}
               </span>
               <span className="hidden min-[1680px]:inline-block w-px h-4 bg-[#D4AF37]/30" />
               <span className="hidden min-[1680px]:inline-block text-[11px] uppercase tracking-widest text-[#D4C5B9]/80 font-semibold whitespace-nowrap">
@@ -161,7 +165,7 @@ export const Header: React.FC = () => {
             </button>
           </nav>
 
-          {/* Right Action Bar - Adaptive layout preventing any collision */}
+          {/* Right Action Bar - Adaptive layout preventing any collision & keeping hamburger always visible */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
             {/* Desktop Expandable Luxury Search (Visible on screens >= 1024px (lg:)) */}
@@ -239,8 +243,20 @@ export const Header: React.FC = () => {
               </AnimatePresence>
             </div>
 
-            {/* Language Switcher: Strict EN / BN with 40px+ touch target */}
-            <div className="shrink-0 inline-flex items-center p-0.5 rounded-full bg-[#221711] border border-[#D4AF37]/30 shadow-inner">
+            {/* Mobile Compact Language Switcher (< 640px) */}
+            <button
+              onClick={() => setLanguage(language === 'EN' ? 'BN' : 'EN')}
+              className="sm:hidden px-2.5 py-1.5 min-h-[38px] flex items-center gap-1 rounded-full bg-[#221711] border border-[#D4AF37]/40 text-[11px] font-bold shadow-inner shrink-0 cursor-pointer"
+              title={language === 'EN' ? 'বাংলা মোডে পরিবর্তন করুন' : 'Switch to English'}
+              aria-label="Toggle language mode"
+            >
+              <span className={language === 'EN' ? 'text-[#D4AF37] font-extrabold' : 'text-[#A69282]'}>EN</span>
+              <span className="text-[#D4AF37]/40">/</span>
+              <span className={language === 'BN' ? 'text-[#D4AF37] font-extrabold' : 'text-[#A69282]'}>বাং</span>
+            </button>
+
+            {/* Desktop / Tablet Language Switcher (>= 640px) */}
+            <div className="hidden sm:inline-flex shrink-0 items-center p-0.5 rounded-full bg-[#221711] border border-[#D4AF37]/30 shadow-inner">
               <button
                 onClick={() => setLanguage('EN')}
                 className={`px-2 sm:px-2.5 py-1.5 min-h-[38px] sm:min-h-[40px] flex items-center text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer whitespace-nowrap ${
@@ -277,39 +293,40 @@ export const Header: React.FC = () => {
               <span className="hidden min-[1680px]:inline">{l(t.whatsapp)}</span>
             </a>
 
-            {/* Client Portal / Login Trigger with 44px touch target */}
+            {/* Client Portal / Login Trigger with 44px touch target (Visible on md+, available in drawer on mobile) */}
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer shrink-0"
+              className="hidden md:flex min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] items-center justify-center rounded-full hover:bg-[#2E2018] text-[#E2D7CC] hover:text-[#D4AF37] transition-colors cursor-pointer shrink-0"
               title={l(t.clientPortal)}
               aria-label="Client Portal"
             >
               <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Cart Trigger with Drawer and min-h-[44px] */}
+            {/* Cart Trigger with Drawer and min-h-[38px] on mobile */}
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[40px] sm:min-h-[44px] rounded-full btn-gold cursor-pointer whitespace-nowrap shrink-0"
+              className="relative flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[38px] sm:min-h-[44px] rounded-full btn-gold cursor-pointer whitespace-nowrap shrink-0"
               aria-label="Open Cart Drawer"
             >
-              <ShoppingBag className="w-4 h-4 text-[#170F0B]" />
+              <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#170F0B]" />
               <span className="hidden min-[1600px]:inline text-xs font-bold uppercase tracking-wider text-[#170F0B]">
                 {l(t.cart)}
               </span>
-              <span className="flex items-center justify-center min-w-[20px] h-5 px-1 text-[11px] font-extrabold bg-[#170F0B] text-[#D4AF37] rounded-full shadow-sm">
+              <span className="flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4.5 sm:h-5 px-1 text-[10px] sm:text-[11px] font-extrabold bg-[#170F0B] text-[#D4AF37] rounded-full shadow-sm">
                 {language === 'BN' ? (totalItemsCount === 0 ? '০' : totalItemsCount) : totalItemsCount}
               </span>
             </motion.button>
 
-            {/* Mobile / Tablet Menu Toggle: Visible on screens < 1024px (lg:hidden) with 44px minimum touch target */}
+            {/* Mobile / Tablet Menu Toggle: ALWAYS properly visible & aligned on the top right */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#E2D7CC] hover:text-[#D4AF37] shrink-0 cursor-pointer rounded-xl hover:bg-[#2A1E17]"
-              aria-label="Toggle menu"
+              className="lg:hidden min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center p-2 text-[#D4AF37] hover:text-[#FDFBF7] bg-[#241710] sm:bg-transparent border border-[#D4AF37]/45 sm:border-transparent shrink-0 cursor-pointer rounded-xl hover:bg-[#2E2018] transition-all shadow-sm"
+              aria-label="Toggle navigation menu"
+              title="Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
 
           </div>

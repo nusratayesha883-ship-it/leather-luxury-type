@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { TRANSLATIONS } from '../data/translations';
 
 export const Footer: React.FC = () => {
-  const { l } = useApp();
+  const { l, language } = useApp();
   const t = TRANSLATIONS.footer;
 
   const socialLinks = [
@@ -43,10 +43,20 @@ export const Footer: React.FC = () => {
         {/* Brand Copyright */}
         <div className="text-center sm:text-left">
           <span className="font-heading text-lg font-bold text-[#FDFBF7] block">
-            {l(TRANSLATIONS.brand.name)}
+            {language === 'BN' ? (
+              <>লাক্স<span className="text-[#D4AF37]">হাইড</span> অ্যাটেলিয়ার</>
+            ) : (
+              <>Luxe<span className="text-[#D4AF37]">Hide</span> Atelier</>
+            )}
           </span>
           <p className="text-xs text-[#A69282] mt-0.5">
-            © {new Date().getFullYear()} {l(TRANSLATIONS.brand.name)}. {l(t.rights)} {l(t.tagline)}
+            © {new Date().getFullYear()}{' '}
+            {language === 'BN' ? (
+              <>লাক্স<span className="text-[#D4AF37]">হাইড</span> অ্যাটেলিয়ার</>
+            ) : (
+              <>Luxe<span className="text-[#D4AF37]">Hide</span> Atelier</>
+            )}
+            . {l(t.rights)} {l(t.tagline)}
           </p>
         </div>
 
