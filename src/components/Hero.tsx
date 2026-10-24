@@ -27,23 +27,23 @@ export const Hero: React.FC = () => {
           className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out"
         />
         
-        {/* Deep Cognac & Charcoal Gradient Overlay specifically preserving the genuine leather grain */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#231F20]/92 via-[#4B3F35]/80 to-[#231F20]/88" />
+        {/* Deep Luxury Espresso & Cognac Gradient Overlay specifically preserving the genuine leather grain */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#170F0B]/95 via-[#2E1D14]/85 to-[#170F0B]/92" />
         {/* Subtle radial ambient warmth */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15)_0%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.22)_0%,transparent_75%)]" />
       </div>
 
       {/* Content Container with generous padding so text never touches top or edges */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center flex flex-col items-center py-12">
         
-        {/* Luxury Top Tag - NO B2B TEXT */}
+        {/* Luxury Top Tag */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF6F1]/10 backdrop-blur-md border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-semibold tracking-wider uppercase mb-6 shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#271B14]/85 backdrop-blur-md border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold tracking-wider uppercase mb-6 shadow-[0_2px_12px_rgba(0,0,0,0.4)]"
         >
-          <Sparkles className="w-3.5 h-3.5" />
+          <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
           <span>{l(t.badge)}</span>
         </motion.div>
 
@@ -52,7 +52,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold text-[#FAF6F1] tracking-tight leading-[1.18] max-w-4xl drop-shadow-md"
+          className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold text-[#FDFBF7] tracking-tight leading-[1.18] max-w-4xl drop-shadow-lg"
         >
           {l(t.h1)}
         </motion.h1>
@@ -62,7 +62,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-stone-300 text-sm sm:text-base md:text-lg max-w-2xl mt-4 sm:mt-5 font-normal leading-relaxed"
+          className="text-[#D4C5B9] text-sm sm:text-base md:text-lg max-w-2xl mt-4 sm:mt-5 font-normal leading-relaxed"
         >
           {l(t.subheadline)}
         </motion.p>
@@ -77,16 +77,16 @@ export const Hero: React.FC = () => {
           {/* CTA 1: Explore Catalog */}
           <button
             onClick={() => scrollToSection('catalog')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold text-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold text-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-lg"
           >
             <span>{l(t.ctaExplore)}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#170F0B]" />
           </button>
 
           {/* CTA 2: Request Custom Service */}
           <button
             onClick={() => scrollToSection('custom-service')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#FAF6F1]/10 hover:bg-[#FAF6F1]/20 text-[#FAF6F1] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#FAF6F1]/25 hover:border-[#D4AF37] transition-all backdrop-blur-sm flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#271B14]/80 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all backdrop-blur-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
           >
             <Sliders className="w-4 h-4 text-[#D4AF37]" />
             <span>{l(t.ctaCustom)}</span>

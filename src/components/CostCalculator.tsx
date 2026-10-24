@@ -35,25 +35,25 @@ export const CostCalculator: React.FC = () => {
   };
 
   return (
-    <section id="calculator" className="w-full py-20 bg-[#FAF6F1]">
+    <section id="calculator" className="w-full py-20 bg-[#170F0B]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header - NO B2B text */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4B3F35]/10 border border-[#D4AF37]/40 text-[#4B3F35] text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#261A13] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             <Calculator className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{l(t.badge)}</span>
           </div>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#231F20] tracking-tight">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#FDFBF7] tracking-tight">
             {l(t.title)}
           </h2>
-          <p className="text-sm sm:text-base text-[#4B3F35]/80 mt-3 font-normal leading-relaxed">
+          <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal leading-relaxed">
             {l(t.subtitle)}
           </p>
         </div>
 
         {/* Simplified Calculator Box */}
-        <div className="max-w-4xl mx-auto luxury-card rounded-3xl p-6 sm:p-10 bg-white border border-[#4B3F35]/15 shadow-xl">
+        <div className="max-w-4xl mx-auto luxury-card rounded-3xl p-6 sm:p-10 bg-[#261A13] border border-[#D4AF37]/30 shadow-2xl">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
@@ -62,7 +62,7 @@ export const CostCalculator: React.FC = () => {
               
               {/* 1. Leather Selection */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#4B3F35] mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
                   {l(t.leatherSelectLabel)}
                 </label>
                 <select
@@ -75,10 +75,10 @@ export const CostCalculator: React.FC = () => {
                       setSqftRequired(found.moq);
                     }
                   }}
-                  className="w-full px-4 py-3.5 rounded-2xl bg-[#FAF6F1] border border-[#4B3F35]/20 text-[#231F20] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
+                  className="w-full px-4 py-3.5 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/25 text-[#FDFBF7] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all"
                 >
                   {LEATHER_CATALOG.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.id} value={item.id} className="bg-[#1A110C] text-[#FDFBF7]">
                       {l(item.name)} — {formatPrice(item.priceUSD, item.priceBDT, language, { perSqft: true, decimals: true })}
                     </option>
                   ))}
@@ -88,7 +88,7 @@ export const CostCalculator: React.FC = () => {
               {/* 2. Required Sq.Ft Slider & Input */}
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-[#4B3F35]">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#D4AF37]">
                     {l(t.sqftSliderLabel)}
                   </label>
                   <div className="flex items-center gap-1.5">
@@ -99,9 +99,9 @@ export const CostCalculator: React.FC = () => {
                       step="5"
                       value={sqftRequired}
                       onChange={(e) => setSqftRequired(Math.max(1, Number(e.target.value)))}
-                      className="w-20 text-center font-bold text-sm bg-[#FAF6F1] border border-[#4B3F35]/20 rounded-lg py-1 px-2 text-[#231F20] focus:outline-none focus:border-[#D4AF37]"
+                      className="w-20 text-center font-bold text-sm bg-[#1A110C] border border-[#D4AF37]/25 rounded-lg py-1 px-2 text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37]"
                     />
-                    <span className="text-xs font-semibold text-[#4B3F35]">
+                    <span className="text-xs font-semibold text-[#D4C5B9]">
                       {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}
                     </span>
                   </div>
@@ -114,10 +114,10 @@ export const CostCalculator: React.FC = () => {
                   step="5"
                   value={sqftRequired}
                   onChange={(e) => setSqftRequired(Number(e.target.value))}
-                  className="w-full accent-[#D4AF37] cursor-pointer h-2.5 bg-[#4B3F35]/15 rounded-lg mt-2"
+                  className="w-full accent-[#D4AF37] cursor-pointer h-2.5 bg-[#1A110C] rounded-lg mt-2"
                 />
 
-                <div className="flex justify-between text-[11px] text-[#4B3F35]/60 mt-2 font-medium">
+                <div className="flex justify-between text-[11px] text-[#A69282] mt-2 font-medium">
                   <span>10 {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
                   <span>150 {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
                   <span>300+ {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}</span>
@@ -125,15 +125,15 @@ export const CostCalculator: React.FC = () => {
               </div>
 
               {/* Unit Rate & MOQ Summary */}
-              <div className="p-4 rounded-2xl bg-[#FAF6F1] border border-[#4B3F35]/10 space-y-2 text-xs">
+              <div className="p-4 rounded-2xl bg-[#1F1510] border border-[#D4AF37]/20 space-y-2 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-[#4B3F35] font-medium">{l(t.rateLabel)}:</span>
-                  <span className="font-bold text-[#231F20]">
+                  <span className="text-[#D4C5B9] font-medium">{l(t.rateLabel)}:</span>
+                  <span className="font-bold text-[#E5C365]">
                     {formatPrice(selectedLeather.priceUSD, selectedLeather.priceBDT, language, { perSqft: true, decimals: true })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#4B3F35] font-medium">{l(t.moqNotice)}:</span>
+                  <span className="text-[#D4C5B9] font-medium">{l(t.moqNotice)}:</span>
                   <span className="font-bold text-[#D4AF37]">
                     {formatNumberOnly(selectedLeather.moq, language)} {language === 'BN' ? 'বর্গফুট' : 'sq.ft'}
                   </span>
@@ -143,7 +143,7 @@ export const CostCalculator: React.FC = () => {
             </div>
 
             {/* Total Output Card */}
-            <div className="p-8 rounded-3xl bg-[#4B3F35] text-[#FAF6F1] shadow-2xl border border-[#D4AF37]/40 flex flex-col justify-between text-center space-y-6">
+            <div className="p-8 rounded-3xl bg-gradient-to-br from-[#38261B] via-[#2D1E16] to-[#20150F] text-[#FDFBF7] shadow-2xl border border-[#D4AF37]/50 flex flex-col justify-between text-center space-y-6">
               
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold block mb-2">
@@ -151,17 +151,17 @@ export const CostCalculator: React.FC = () => {
                 </span>
                 
                 {/* Big Calculated Price */}
-                <div className="font-heading text-4xl sm:text-5xl font-extrabold text-[#FAF6F1] drop-shadow-sm">
+                <div className="font-heading text-4xl sm:text-5xl font-extrabold text-[#FDFBF7] drop-shadow-md">
                   {formatPrice(totalPriceUSD, totalPriceBDT, language, { decimals: true })}
                 </div>
 
-                <p className="text-xs text-stone-300 mt-3 font-normal opacity-90">
+                <p className="text-xs text-[#D4C5B9] mt-3 font-normal opacity-90">
                   {formatNumberOnly(sqftRequired, language)} {language === 'BN' ? 'বর্গফুট' : 'sq.ft'} × {formatPrice(selectedLeather.priceUSD, selectedLeather.priceBDT, language, { perSqft: true, decimals: true })}
                 </p>
               </div>
 
               {/* Formula note */}
-              <div className="p-3 rounded-xl bg-black/25 text-[11px] text-stone-300 leading-normal border border-white/10">
+              <div className="p-3 rounded-xl bg-[#140D09]/60 text-[11px] text-[#D4C5B9] leading-normal border border-[#D4AF37]/20">
                 {l(t.formulaNote)}
               </div>
 
@@ -170,16 +170,16 @@ export const CostCalculator: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs font-bold uppercase tracking-wider text-[#231F20] flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                  className="w-full py-4 px-6 rounded-2xl btn-gold text-xs font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-lg"
                 >
                   {addedFeedback ? (
                     <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-800" />
+                      <CheckCircle2 className="w-4 h-4 text-[#170F0B]" />
                       <span>{language === 'BN' ? 'ব্যাগে যোগ হয়েছে!' : 'Added to Bag!'}</span>
                     </>
                   ) : (
                     <>
-                      <ShoppingBag className="w-4 h-4 text-[#231F20]" />
+                      <ShoppingBag className="w-4 h-4 text-[#170F0B]" />
                       <span>{l(t.addToCartBtn)}</span>
                     </>
                   )}
@@ -188,7 +188,7 @@ export const CostCalculator: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleCustomInquiry}
-                  className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs font-semibold tracking-wide border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#1F1510] hover:bg-[#2A1E17] text-[#FDFBF7] hover:text-[#D4AF37] text-xs font-semibold tracking-wide border border-[#D4AF37]/35 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Sliders className="w-3.5 h-3.5 text-[#D4AF37]" />
                   <span>{l(t.customInquiryBtn)}</span>

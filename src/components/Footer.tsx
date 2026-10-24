@@ -46,15 +46,15 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="w-full bg-[#FAF6F1] border-t border-[#4B3F35]/15 py-10">
+    <footer className="w-full bg-[#140D0A] border-t border-[#D4AF37]/20 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         
         {/* Brand Copyright */}
         <div className="text-center sm:text-left">
-          <span className="font-heading text-lg font-bold text-[#231F20] block">
+          <span className="font-heading text-lg font-bold text-[#FDFBF7] block">
             {l(TRANSLATIONS.brand.name)}
           </span>
-          <p className="text-xs text-[#4B3F35]/70 mt-0.5">
+          <p className="text-xs text-[#A69282] mt-0.5">
             © {new Date().getFullYear()} {l(TRANSLATIONS.brand.name)}. {l(t.rights)} {l(t.tagline)}
           </p>
         </div>
@@ -68,7 +68,7 @@ export const Footer: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={social.name}
-              className="w-10 h-10 rounded-full bg-white border border-[#4B3F35]/15 flex items-center justify-center text-[#4B3F35] hover:text-[#D4AF37] hover:border-[#D4AF37] hover:scale-110 shadow-sm transition-all"
+              className="w-10 h-10 rounded-full bg-[#221711] border border-[#D4AF37]/25 flex items-center justify-center text-[#D4C5B9] hover:text-[#D4AF37] hover:border-[#D4AF37] hover:shadow-[0_0_12px_rgba(212,175,55,0.25)] hover:scale-110 shadow-sm transition-all"
             >
               {social.svg}
             </a>

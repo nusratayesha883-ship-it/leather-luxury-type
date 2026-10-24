@@ -14,7 +14,7 @@ import { Footer } from './components/Footer';
 export const App: React.FC = () => {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-[#FAF6F1] text-[#231F20] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#231F20]">
+      <div className="min-h-screen bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
         
         {/* 1. Header & Navbar with Language Switcher, Search, Cart & WhatsApp */}
         <Header />

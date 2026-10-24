@@ -15,22 +15,22 @@ export const TrustBadges: React.FC = () => {
   const badges = TRANSLATIONS.trustBadges;
 
   return (
-    <section id="trust-strip" className="w-full bg-[#FAF6F1] border-b border-[#4B3F35]/15 py-8">
+    <section id="trust-strip" className="w-full bg-[#1D130E] border-b border-[#D4AF37]/20 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {badges.map((badge, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-4 p-4 rounded-2xl bg-[#FFFFFF] border border-[#4B3F35]/10 shadow-sm hover:shadow-md hover:border-[#D4AF37]/50 transition-all"
+              className="flex items-start gap-4 p-4 rounded-2xl bg-[#261A13] border border-[#D4AF37]/20 shadow-md hover:shadow-xl hover:border-[#D4AF37]/60 hover:bg-[#2C1E16] transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#4B3F35]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/30">
+              <div className="w-12 h-12 rounded-xl bg-[#34231A] flex items-center justify-center shrink-0 border border-[#D4AF37]/40 shadow-inner">
                 {ICONS[idx]}
               </div>
               <div>
-                <h4 className="font-heading text-sm sm:text-base font-bold text-[#231F20] leading-snug">
+                <h4 className="font-heading text-sm sm:text-base font-bold text-[#FDFBF7] leading-snug">
                   {l(badge.title)}
                 </h4>
-                <p className="text-xs text-[#4B3F35]/75 mt-1 leading-normal">
+                <p className="text-xs text-[#D4C5B9] mt-1 leading-normal">
                   {l(badge.desc)}
                 </p>
               </div>
