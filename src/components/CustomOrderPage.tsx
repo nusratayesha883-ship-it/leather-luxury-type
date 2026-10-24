@@ -25,7 +25,7 @@ import { formatPrice, formatNumberOnly } from '../data/formatters';
 import type { DeliveryDestination, PaymentMethodType, LeatherItem } from '../types';
 
 export const CustomOrderPage: React.FC = () => {
-  const { language, l, currentPath, navigateTo, customOrderDraft } = useApp();
+  const { language, l, currentPath, navigateTo, customOrderDraft, updateCustomOrderDraft } = useApp();
 
   // Scroll to top when loaded
   useEffect(() => {
@@ -41,6 +41,37 @@ export const CustomOrderPage: React.FC = () => {
   const selectedLeather = useMemo<LeatherItem>(() => {
     return LEATHER_CATALOG.find((item) => item.id === selectedLeatherId) || LEATHER_CATALOG[0];
   }, [selectedLeatherId]);
+
+  // Handle Leather selection change with two-way sync
+  const handleLeatherChange = (newLeatherId: string) => {
+    setSelectedLeatherId(newLeatherId);
+    const found = LEATHER_CATALOG.find((item) => item.id === newLeatherId);
+    if (found) {
+      if (sqft < found.moq) {
+        setSqft(found.moq);
+      }
+      if (found.colors[0]) {
+        setSelectedColorName(l(found.colors[0].name));
+      }
+      updateCustomOrderDraft({
+        leatherId: newLeatherId,
+        sqft: Math.max(sqft, found.moq),
+        totalUSD: Math.max(sqft, found.moq) * found.priceUSD,
+        totalBDT: Math.max(sqft, found.moq) * found.priceBDT,
+      });
+    }
+  };
+
+  // Handle SqFt quantity change with two-way sync
+  const handleSqftChange = (newSqft: number) => {
+    const val = Math.max(1, newSqft);
+    setSqft(val);
+    updateCustomOrderDraft({
+      sqft: val,
+      totalUSD: val * selectedLeather.priceUSD,
+      totalBDT: val * selectedLeather.priceBDT,
+    });
+  };
 
   // Customization Options State
   const [selectedColorName, setSelectedColorName] = useState<string>(
@@ -64,7 +95,7 @@ export const CustomOrderPage: React.FC = () => {
   const [postalCode, setPostalCode] = useState<string>('');
   const [country, setCountry] = useState<string>('Bangladesh');
 
-  // Delivery Destination & Fee
+  // Delivery Destination (Inside Country vs Outside Country)
   const [deliveryDestination, setDeliveryDestination] = useState<DeliveryDestination>('domestic');
 
   // Payment Method
@@ -91,11 +122,18 @@ export const CustomOrderPage: React.FC = () => {
   const leatherTotalUSD = sqft * unitPriceUSD;
   const leatherTotalBDT = sqft * unitPriceBDT;
 
-  // Delivery Fees
-  const deliveryFeeUSD = deliveryDestination === 'domestic' ? 2.00 : 45.00;
-  const deliveryFeeBDT = deliveryDestination === 'domestic' ? 150 : 5400;
+  // DYNAMIC WEIGHT / SQ.FT BASED DELIVERY FEE CALCULATION:
+  // Inside Country (Bangladesh): Base ৳100 + ৳10 per sq.ft (Minimum ৳150)
+  // Outside Country (International Air Freight): Base $20.00 + $1.50 per sq.ft (Minimum $35.00)
+  const deliveryFeeBDT = deliveryDestination === 'domestic'
+    ? Math.max(150, 100 + sqft * 10)
+    : Math.max(4200, 2400 + sqft * 180);
 
-  // Grand Totals
+  const deliveryFeeUSD = deliveryDestination === 'domestic'
+    ? Math.max(1.25, 0.83 + sqft * 0.083)
+    : Math.max(35.00, 20.00 + sqft * 1.50);
+
+  // Grand Totals: Base Leather Price + Customization Fee (৳0 / $0 Complimentary) + Dynamic Delivery Charge
   const grandTotalUSD = leatherTotalUSD + deliveryFeeUSD;
   const grandTotalBDT = leatherTotalBDT + deliveryFeeBDT;
 
@@ -104,17 +142,17 @@ export const CustomOrderPage: React.FC = () => {
     // Form Validation
     if (!fullName.trim()) {
       setValidationError(language === 'BN' ? 'অনুগ্রহ করে আপনার পুরো নাম প্রদান করুন।' : 'Please enter your Full Name.');
-      window.scrollTo({ top: 380, behavior: 'smooth' });
+      window.scrollTo({ top: 400, behavior: 'smooth' });
       return;
     }
     if (!phoneNumber.trim()) {
       setValidationError(language === 'BN' ? 'অনুগ্রহ করে আপনার ফোন / হোয়াটসঅ্যাপ নম্বর প্রদান করুন।' : 'Please enter your Phone or WhatsApp Number.');
-      window.scrollTo({ top: 380, behavior: 'smooth' });
+      window.scrollTo({ top: 400, behavior: 'smooth' });
       return;
     }
     if (!streetAddress.trim() || !city.trim()) {
       setValidationError(language === 'BN' ? 'অনুগ্রহ করে পূর্ণ ডেলিভারি ঠিকানা ও শহরের নাম লিখুন।' : 'Please enter your complete Street Address and City.');
-      window.scrollTo({ top: 550, behavior: 'smooth' });
+      window.scrollTo({ top: 600, behavior: 'smooth' });
       return;
     }
     setValidationError(null);
@@ -128,7 +166,7 @@ export const CustomOrderPage: React.FC = () => {
     const foilLabel = 
       foilOption === 'gold' ? '24k Gold Foil Stamping' :
       foilOption === 'silver' ? 'Silver Foil Stamping' :
-      foilOption === 'blind' ? 'Blind Debossing (No Foil)' : 'Raw / None';
+      foilOption === 'blind' ? 'Blind Debossing (Deep Relief)' : 'Raw / None';
 
     const thicknessLabel =
       thicknessOption === 'standard' ? 'Standard 1.4 - 1.6 mm (3.5 - 4.0 oz)' :
@@ -136,44 +174,53 @@ export const CustomOrderPage: React.FC = () => {
       thicknessOption === 'heavy' ? 'Heavy Belt & Saddlery 2.0 - 2.4 mm (5.0 - 6.0 oz)' : 'Custom Tannery Splitting';
 
     const destinationLabel = deliveryDestination === 'domestic' 
-      ? 'Inside Bangladesh (Domestic Express Cargo)' 
-      : 'Outside Bangladesh (International Priority Air Freight)';
+      ? 'Inside Country (Bangladesh Domestic Express)' 
+      : 'Outside Country (International Priority Air Freight)';
+
+    const dynamicRateNote = deliveryDestination === 'domestic'
+      ? `৳${deliveryFeeBDT.toLocaleString()} (Rate: ৳10 / sq.ft)`
+      : `$${deliveryFeeUSD.toFixed(2)} USD (Rate: $1.50 / sq.ft Air Cargo)`;
 
     const paymentLabel = 
       paymentMethod === 'bkash' ? 'bKash (01905206450)' :
       paymentMethod === 'nagad' ? 'Nagad (01905206450)' :
       paymentMethod === 'bank' ? 'Bank Wire Transfer' : 'Card / Online Invoice';
 
-    // Build the structured WhatsApp message
+    // Build the structured WhatsApp message with transparent itemized cost breakdown
     const message = 
       `🏛️ *LUXEHIDE ATELIER — BESPOKE ORDER SUBMISSION*\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📦 *ORDER DETAILS:*\n` +
+      `📋 *ORDER DETAILS:*\n` +
       `• Order Ref: *${orderId}*\n` +
       `• Leather Hide: *${l(selectedLeather.name)}*\n` +
-      `• Order Footage: *${sqft} sq.ft*\n` +
+      `• Quantity: *${sqft} sq.ft*\n` +
       `• Base Rate: *${formatPrice(unitPriceUSD, unitPriceBDT, language, { perSqft: true, decimals: true })}*\n` +
-      `• Leather Subtotal: *${formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}*\n\n` +
+      `• Base Leather Total: *${formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}*\n\n` +
       `🎨 *CUSTOM SPECIFICATIONS:*\n` +
       `• Color Shade: *${effectiveColor}*\n` +
       `• Logo / Debossing: *${customLogoText.trim() ? `"${customLogoText.trim()}"` : 'None / Raw'}* (${foilLabel})\n` +
-      `• Thickness / Temper: *${thicknessLabel}*\n` +
+      `• Thickness / Grade: *${thicknessLabel}*\n` +
+      `• Customization Fee: *Complimentary ($0 / ৳0)*\n` +
       (specialNotes.trim() ? `• Atelier Notes: *${specialNotes.trim()}*\n\n` : `\n`) +
       `📍 *SHIPPING & DESTINATION:*\n` +
       `• Recipient: *${fullName}*\n` +
       `• Phone / WhatsApp: *${phoneNumber}*\n` +
       (emailAddress.trim() ? `• Email: *${emailAddress.trim()}*\n` : '') +
-      (companyName.trim() ? `• Company / Atelier: *${companyName.trim()}*\n` : '') +
+      (companyName.trim() ? `• Company: *${companyName.trim()}*\n` : '') +
       `• Delivery Zone: *${destinationLabel}*\n` +
       `• Full Address: *${streetAddress}, ${city} ${postalCode}, ${country}*\n` +
-      `• Delivery Fee: *${formatPrice(deliveryFeeUSD, deliveryFeeBDT, language, { decimals: true })}*\n\n` +
+      `• Dynamic Delivery Charge: *${dynamicRateNote}*\n\n` +
       `💳 *PAYMENT METHOD:*\n` +
       `• Channel: *${paymentLabel}*\n` +
       `• TrxID / Note: *${paymentNote.trim() || 'Pending Invoice / PI'}*\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `💰 *GRAND TOTAL: ${formatPrice(grandTotalUSD, grandTotalBDT, language, { decimals: true })}*\n` +
+      `💰 *ITEMIZED COST BREAKDOWN:*\n` +
+      `• Base Leather: ${formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}\n` +
+      `• Customization: Complimentary ($0 / ৳0)\n` +
+      `• Delivery Charge: ${dynamicRateNote}\n` +
+      `• *GRAND TOTAL:* ${deliveryDestination === 'domestic' ? `৳${grandTotalBDT.toLocaleString()} ($${grandTotalUSD.toFixed(2)} USD)` : `$${grandTotalUSD.toFixed(2)} USD (৳${grandTotalBDT.toLocaleString()} BDT)`}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `_Sent directly via LuxeHide Atelier Web Application_`;
+      `_Submitted directly via LuxeHide Atelier Web Application_`;
 
     // Save submitted order for instant receipt display
     setSubmittedOrder({
@@ -182,7 +229,10 @@ export const CustomOrderPage: React.FC = () => {
       phoneNumber,
       leatherName: l(selectedLeather.name),
       sqft,
-      grandTotalFormatted: formatPrice(grandTotalUSD, grandTotalBDT, language, { decimals: true }),
+      destinationLabel,
+      dynamicDeliveryFeeFormatted: deliveryDestination === 'domestic' ? `৳${deliveryFeeBDT.toLocaleString()} (৳10 / sq.ft)` : `$${deliveryFeeUSD.toFixed(2)} ($1.50 / sq.ft)`,
+      grandTotalFormatted: deliveryDestination === 'domestic' ? `৳${grandTotalBDT.toLocaleString()}` : `$${grandTotalUSD.toFixed(2)}`,
+      grandTotalSecondary: deliveryDestination === 'domestic' ? `$${grandTotalUSD.toFixed(2)} USD` : `৳${grandTotalBDT.toLocaleString()} BDT`,
     });
 
     // Auto open WhatsApp with the structured message
@@ -205,9 +255,13 @@ export const CustomOrderPage: React.FC = () => {
           </button>
 
           <div className="hidden sm:flex items-center gap-2 text-xs text-[#A69282]">
-            <span>{language === 'BN' ? 'হোম' : 'Home'}</span>
+            <span onClick={() => navigateTo('/')} className="cursor-pointer hover:text-[#D4AF37]">
+              {language === 'BN' ? 'হোম' : 'Home'}
+            </span>
             <ChevronRight className="w-3.5 h-3.5 text-[#D4AF37]/60" />
-            <span className="text-[#D4AF37] font-semibold">{language === 'BN' ? 'কাস্টম অর্ডার চেকআউট' : 'Custom Order Checkout'}</span>
+            <span className="text-[#D4AF37] font-semibold">
+              {language === 'BN' ? 'কাস্টম অর্ডার চেকআউট' : 'Custom Order Checkout'}
+            </span>
           </div>
         </div>
 
@@ -222,8 +276,8 @@ export const CustomOrderPage: React.FC = () => {
           </h1>
           <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal max-w-2xl mx-auto leading-relaxed">
             {language === 'BN'
-              ? 'আপনার নির্বাচিত চামড়া, নির্দিষ্ট কালার শেড, লোগো এমবসিং এবং শিপিং ঠিকানা নিশ্চিত করে সরাসরি হোয়াটসঅ্যাপে অর্ডার পাঠান।'
-              : 'Review pre-filled hide details, specify custom coloring, logo debossing, and delivery destination to finalize your direct tannery order.'}
+              ? 'চামড়ার ধরণ, পরিমাণ, নির্দিষ্ট কালার শেড, লোগো এমবসিং ও শিপিং তথ্য নির্বাচন করুন। ডানপাশের সামারির সাথে তাৎক্ষণিক সমন্বয় হবে।'
+              : 'Select leather hide, footage, custom finishes, and delivery country with instant real-time two-way syncing and transparent cost breakdown.'}
           </p>
         </div>
 
@@ -238,10 +292,10 @@ export const CustomOrderPage: React.FC = () => {
         {/* Main 2-Column Responsive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* LEFT COLUMN: Customization, Shipping, Delivery & Payment Forms (7 cols) */}
+          {/* LEFT COLUMN: 4 Form Boxes with Two-Way Sync (7 cols) */}
           <div className="lg:col-span-7 space-y-8">
             
-            {/* 1. Customization Options Card */}
+            {/* BOX 1: Leather Type, Sq.Ft Quantity & Customization Options */}
             <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
@@ -249,20 +303,96 @@ export const CustomOrderPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'চামড়ার কাস্টমাইজেশন অপশন' : 'Customization Options'}
+                    {language === 'BN' ? 'চামড়ার ধরণ, পরিমাণ ও কাস্টমাইজেশন' : 'Leather Hide & Customization Specs'}
                   </h3>
                   <p className="text-xs text-[#D4C5B9]">
-                    {language === 'BN' ? 'কালার শেড, ব্র্যান্ডিং ও পুরুত্ব নির্ধারণ করুন' : 'Specify color shades, stamping & thickness'}
+                    {language === 'BN' ? 'চামড়া নির্বাচন, স্কয়ার ফিট পরিমাণ ও ফিনিশিং নির্ধারণ করুন' : 'Select hide, square footage, shade, and debossing'}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 
-                {/* Color Shade Selection */}
+                {/* 1.1 Leather Type Selector (Two-Way Synced) */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
+                    {language === 'BN' ? '১. চামড়ার ধরণ নির্বাচন করুন *' : '1. Select Leather Hide *'}
+                  </label>
+                  <select
+                    value={selectedLeatherId}
+                    onChange={(e) => handleLeatherChange(e.target.value)}
+                    className="w-full px-4 py-3.5 rounded-2xl bg-[#18100C] border border-[#D4AF37]/30 text-[#FDFBF7] text-sm focus:outline-none focus:border-[#D4AF37] font-semibold cursor-pointer transition-all shadow-inner"
+                  >
+                    {LEATHER_CATALOG.map((item) => (
+                      <option key={item.id} value={item.id} className="bg-[#18100C]">
+                        {l(item.name)} — {formatPrice(item.priceUSD, item.priceBDT, language, { perSqft: true, decimals: true })} (MOQ: {item.moq} sq.ft)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 1.2 Required Sq.Ft Stepper & Slider (Two-Way Synced) */}
+                <div className="p-4 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/25 space-y-3">
+                  <div className="flex justify-between items-center text-xs font-bold text-[#D4AF37]">
+                    <span className="uppercase tracking-wider">
+                      {language === 'BN' ? '২. প্রয়োজনীয় চামড়ার পরিমাণ (বর্গফুট) *' : '2. Required Leather Area (Sq.Ft) *'}
+                    </span>
+                    <span className="text-[11px] text-[#A69282] font-normal">
+                      {language === 'BN' ? 'ন্যূনতম' : 'MOQ'}: {formatNumberOnly(selectedLeather.moq, language)} sq.ft
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-[#241710] rounded-xl border border-[#D4AF37]/40 px-3 py-1.5 shrink-0 shadow-inner">
+                      <button
+                        type="button"
+                        onClick={() => handleSqftChange(Math.max(selectedLeather.moq, sqft - 10))}
+                        className="p-1 text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer"
+                        title="Decrease by 10 sq.ft"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="number"
+                        min="1"
+                        max="1000"
+                        value={sqft}
+                        onChange={(e) => handleSqftChange(Number(e.target.value))}
+                        className="w-16 text-center font-bold text-sm bg-transparent text-[#FDFBF7] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleSqftChange(sqft + 10)}
+                        className="p-1 text-[#D4C5B9] hover:text-[#D4AF37] cursor-pointer"
+                        title="Increase by 10 sq.ft"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="flex-1">
+                      <input
+                        type="range"
+                        min={selectedLeather.moq}
+                        max="400"
+                        step="5"
+                        value={sqft}
+                        onChange={(e) => handleSqftChange(Number(e.target.value))}
+                        className="w-full accent-[#D4AF37] cursor-pointer h-2.5 bg-[#241710] rounded-lg"
+                      />
+                      <div className="flex justify-between text-[10px] text-[#8D7768] mt-1 font-mono">
+                        <span>{selectedLeather.moq} sq.ft</span>
+                        <span>200 sq.ft</span>
+                        <span>400+ sq.ft</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1.3 Color Shade Selection */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2.5">
-                    {language === 'BN' ? 'কালার শেড নির্বাচন করুন' : 'Select Color Shade'}
+                    {language === 'BN' ? '৩. কালার শেড নির্বাচন করুন' : '3. Select Color Shade'}
                   </label>
                   <div className="flex flex-wrap gap-2.5 mb-3">
                     {selectedLeather.colors.map((c) => {
@@ -278,7 +408,7 @@ export const CustomOrderPage: React.FC = () => {
                           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                             isSelected
                               ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
-                              : 'bg-[#1A110C] text-[#D4C5B9] border-[#D4AF37]/20 hover:border-[#D4AF37]/50'
+                              : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/20 hover:border-[#D4AF37]/50'
                           }`}
                         >
                           <span
@@ -292,22 +422,20 @@ export const CustomOrderPage: React.FC = () => {
                   </div>
 
                   {/* Or Custom Pantone Input */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={customPantone}
-                      onChange={(e) => setCustomPantone(e.target.value)}
-                      placeholder={language === 'BN' ? 'অথবা কাস্টম প্যানটোন কোড লিখুন (যেমন: Pantone 19-1217 TCX)' : 'Or specify bespoke Pantone / Hex (e.g. Pantone 19-1217 TCX)'}
-                      className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={customPantone}
+                    onChange={(e) => setCustomPantone(e.target.value)}
+                    placeholder={language === 'BN' ? 'অথবা কাস্টম প্যানটোন কোড লিখুন (যেমন: Pantone 19-1217 TCX)' : 'Or specify bespoke Pantone / Hex (e.g. Pantone 19-1217 TCX)'}
+                    className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768] transition-all"
+                  />
                 </div>
 
-                {/* Custom Logo / Debossing Text & Foil */}
+                {/* 1.4 Custom Logo / Debossing Text & Foil */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                      {language === 'BN' ? 'লোগো / ব্র্যান্ড ডিবসিং টেক্সট' : 'Custom Logo / Debossing Text'}
+                      {language === 'BN' ? '৪. লোগো / ডিবসিং টেক্সট' : '4. Custom Logo / Debossing Text'}
                     </label>
                     <input
                       type="text"
@@ -320,7 +448,7 @@ export const CustomOrderPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                      {language === 'BN' ? 'ফয়েল স্ট্যাম্পিং শৈলী' : 'Foil Stamping Finish'}
+                      {language === 'BN' ? '৫. ফয়েল স্ট্যাম্পিং শৈলী' : '5. Foil Stamping Finish'}
                     </label>
                     <select
                       value={foilOption}
@@ -335,11 +463,11 @@ export const CustomOrderPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Thickness & Special Notes */}
+                {/* 1.5 Thickness & Special Notes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                      {language === 'BN' ? 'চামড়ার পুরুত্ব ও টেম্পার' : 'Leather Thickness & Temper'}
+                      {language === 'BN' ? '৬. চামড়ার পুরুত্ব ও টেম্পার' : '6. Leather Thickness & Temper'}
                     </label>
                     <select
                       value={thicknessOption}
@@ -355,7 +483,7 @@ export const CustomOrderPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                      {language === 'BN' ? 'বিশেষ ট্যানারি নোট' : 'Special Tannery Instructions'}
+                      {language === 'BN' ? '৭. বিশেষ ট্যানারি নোট' : '7. Special Tannery Instructions'}
                     </label>
                     <input
                       type="text"
@@ -370,7 +498,7 @@ export const CustomOrderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Complete Shipping Details Card */}
+            {/* BOX 2: Complete Shipping Details Card */}
             <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
@@ -378,10 +506,10 @@ export const CustomOrderPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'ডেলিভারি ও শিপিং তথ্য' : 'Complete Shipping Details'}
+                    {language === 'BN' ? 'ডেলিভারি ও প্রাপকের পূর্ণ তথ্য' : 'Complete Shipping Details'}
                   </h3>
                   <p className="text-xs text-[#D4C5B9]">
-                    {language === 'BN' ? 'পণ্য পাঠানোর জন্য যোগাযোগের ঠিকানা দিন' : 'Enter recipient contact and physical address'}
+                    {language === 'BN' ? 'পণ্য পাঠানোর জন্য গ্রাহকের যোগাযোগ ও পূর্ণ ঠিকানা দিন' : 'Enter recipient contact and physical address'}
                   </p>
                 </div>
               </div>
@@ -525,7 +653,7 @@ export const CustomOrderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. Delivery Destination & Dynamic Fee Selection Card */}
+            {/* BOX 3: Delivery Destination & Dynamic Weight/Sq.Ft Rate Selection Card */}
             <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
@@ -533,22 +661,22 @@ export const CustomOrderPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'ডেলিভারি জোন ও শিপিং চার্জ' : 'Delivery Destination & Fee'}
+                    {language === 'BN' ? 'ডেলিভারি গন্তব্য ও ওজনভিত্তিক ডায়নামিক চার্জ' : 'Dynamic Weight / Sq.Ft Delivery Fee'}
                   </h3>
                   <p className="text-xs text-[#D4C5B9]">
-                    {language === 'BN' ? 'বাংলাদেশ অভ্যন্তরীন বনাম আন্তর্জাতিক ডেলিভারি চার্জ' : 'Select domestic vs international freight'}
+                    {language === 'BN' ? 'স্কয়ার ফিট ওজনের ওপর ভিত্তি করে ডেলিভারি চার্জ হিসাব করা হয়' : 'Delivery fee automatically scales with ordered square footage'}
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
-                {/* Domestic Option */}
+                {/* Inside Country Option (Displayed in BDT) */}
                 <div
                   onClick={() => handleDestinationChange('domestic')}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${
                     deliveryDestination === 'domestic'
-                      ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-md'
+                      ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg'
                       : 'bg-[#18100C] border-[#D4AF37]/20 hover:border-[#D4AF37]/40'
                   }`}
                 >
@@ -556,30 +684,34 @@ export const CustomOrderPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Truck className="w-5 h-5 text-[#D4AF37]" />
                       <span className="font-bold text-sm text-[#FDFBF7]">
-                        {language === 'BN' ? 'বাংলাদেশ অভ্যন্তরে' : 'Inside Bangladesh'}
+                        {language === 'BN' ? 'দেশের ভেতরে (বাংলাদেশ)' : 'Inside Country (Bangladesh)'}
                       </span>
                     </div>
+                    {/* Explicitly displayed in BDT */}
                     <span className="font-bold text-sm text-[#E5C365]">
-                      {formatPrice(2.00, 150, language, { decimals: true })}
+                      ৳{deliveryFeeBDT.toLocaleString()}
                     </span>
                   </div>
+                  <div className="inline-block px-2 py-0.5 rounded-md bg-[#D4AF37]/15 text-[#E5C365] text-[11px] font-mono font-bold mb-1.5">
+                    ৳10 / sq.ft (Express Cargo)
+                  </div>
                   <p className="text-xs text-[#D4C5B9] leading-relaxed">
-                    {language === 'BN' ? 'সারা বাংলাদেশে এক্সপ্রেস ডোরস্টেপ কুরিয়ার (২-৩ কার্যদিবস)' : 'Domestic Express Courier nationwide (2-3 business days)'}
+                    {language === 'BN' ? 'বেস ফি ৳১০০ + প্রতি বর্গফুটে ৳১০ (২-৩ কার্যদিবসে হোম ডেলিভারি)' : 'Base ৳100 + ৳10 per sq.ft weight rate (2-3 business days doorstep)'}
                   </p>
                   {deliveryDestination === 'domestic' && (
-                    <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-bold text-emerald-400">
+                    <span className="inline-flex items-center gap-1 mt-2.5 text-[11px] font-bold text-emerald-400">
                       <Check className="w-3.5 h-3.5" />
-                      {language === 'BN' ? 'নির্বাচিত' : 'Selected'}
+                      {language === 'BN' ? 'সক্রিয় ডেলিভারি মাধ্যম' : 'Active Delivery Zone'}
                     </span>
                   )}
                 </div>
 
-                {/* International Option */}
+                {/* Outside Country Option (Displayed in USD) */}
                 <div
                   onClick={() => handleDestinationChange('international')}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${
                     deliveryDestination === 'international'
-                      ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-md'
+                      ? 'bg-[#2E1E15] border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg'
                       : 'bg-[#18100C] border-[#D4AF37]/20 hover:border-[#D4AF37]/40'
                   }`}
                 >
@@ -587,20 +719,24 @@ export const CustomOrderPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-[#D4AF37]" />
                       <span className="font-bold text-sm text-[#FDFBF7]">
-                        {language === 'BN' ? 'আন্তর্জাতিক ডেলিভারি' : 'Outside Bangladesh'}
+                        {language === 'BN' ? 'দেশের বাইরে (আন্তর্জাতিক)' : 'Outside Country (International)'}
                       </span>
                     </div>
+                    {/* Explicitly displayed in USD */}
                     <span className="font-bold text-sm text-[#E5C365]">
-                      {formatPrice(45.00, 5400, language, { decimals: true })}
+                      ${deliveryFeeUSD.toFixed(2)} USD
                     </span>
                   </div>
+                  <div className="inline-block px-2 py-0.5 rounded-md bg-[#D4AF37]/15 text-[#E5C365] text-[11px] font-mono font-bold mb-1.5">
+                    $1.50 / sq.ft (Air Freight)
+                  </div>
                   <p className="text-xs text-[#D4C5B9] leading-relaxed">
-                    {language === 'BN' ? 'DHL / FedEx আন্তর্জাতিক অগ্রাধিকার এয়ার কার্গো (৫-৭ কার্যদিবস)' : 'DHL / FedEx Priority Worldwide Air Cargo (5-7 business days)'}
+                    {language === 'BN' ? 'বেস $২০ + প্রতি বর্গফুটে $১.৫০ এয়ার কার্গো চার্জ (৫-৭ কার্যদিবস)' : 'Base $20 + $1.50 per sq.ft air cargo rate (5-7 business days with export docs)'}
                   </p>
                   {deliveryDestination === 'international' && (
-                    <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-bold text-emerald-400">
+                    <span className="inline-flex items-center gap-1 mt-2.5 text-[11px] font-bold text-emerald-400">
                       <Check className="w-3.5 h-3.5" />
-                      {language === 'BN' ? 'নির্বাচিত' : 'Selected'}
+                      {language === 'BN' ? 'সক্রিয় ডেলিভারি মাধ্যম' : 'Active Delivery Zone'}
                     </span>
                   )}
                 </div>
@@ -608,7 +744,7 @@ export const CustomOrderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 4. Payment Method Integration Card */}
+            {/* BOX 4: Payment Method Integration Card */}
             <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
@@ -696,7 +832,7 @@ export const CustomOrderPage: React.FC = () => {
 
           </div>
 
-          {/* RIGHT COLUMN: Sticky Order Summary & Grand Total (5 cols) */}
+          {/* RIGHT COLUMN: Sticky Order Summary Box with 2-Way Synced Controls (5 cols) */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
             
             <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
@@ -704,10 +840,10 @@ export const CustomOrderPage: React.FC = () => {
               <div className="pb-4 border-b border-[#D4AF37]/25 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37] block">
-                    {language === 'BN' ? 'অর্ডার সারাংশ' : 'Order Summary'}
+                    {language === 'BN' ? 'লাইভ অর্ডার সারাংশ' : 'Live Order Summary'}
                   </span>
                   <h3 className="font-heading text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'নির্বাচিত পণ্যের হিসাব' : 'Product & Pricing Spec'}
+                    {language === 'BN' ? 'স্বয়ংক্রিয় সমন্বয় হিসাব' : 'Two-Way Synced Overview'}
                   </h3>
                 </div>
                 <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
@@ -735,24 +871,14 @@ export const CustomOrderPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Leather Switcher Dropdown (in case they change their mind) */}
+              {/* TWO-WAY SYNC 1: Leather Switcher Dropdown (syncs with Box 1) */}
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] mb-1.5">
-                  {language === 'BN' ? 'চামড়া পরিবর্তন করতে চান?' : 'Change Leather Hide:'}
+                  {language === 'BN' ? 'চামড়ার ধরণ (বাম পাশের সাথে সিঙ্ক):' : 'Leather Type (Synced with Form):'}
                 </label>
                 <select
                   value={selectedLeatherId}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    setSelectedLeatherId(id);
-                    const found = LEATHER_CATALOG.find((item) => item.id === id);
-                    if (found && sqft < found.moq) {
-                      setSqft(found.moq);
-                    }
-                    if (found && found.colors[0]) {
-                      setSelectedColorName(l(found.colors[0].name));
-                    }
-                  }}
+                  onChange={(e) => handleLeatherChange(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[#18100C] border border-[#D4AF37]/25 text-xs text-[#FDFBF7] focus:outline-none focus:border-[#D4AF37] font-medium cursor-pointer"
                 >
                   {LEATHER_CATALOG.map((item) => (
@@ -763,10 +889,10 @@ export const CustomOrderPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Square Footage Stepper */}
+              {/* TWO-WAY SYNC 2: Square Footage Stepper & Slider (syncs with Box 1) */}
               <div>
                 <div className="flex justify-between items-center mb-1.5 text-xs font-bold text-[#D4AF37]">
-                  <span>{language === 'BN' ? 'পরিমাণ (বর্গফুট)' : 'Order Quantity (sq.ft)'}</span>
+                  <span>{language === 'BN' ? 'পরিমাণ (বর্গফুট)' : 'Order Footage (sq.ft)'}</span>
                   <span className="text-[11px] text-[#A69282] font-normal">
                     {language === 'BN' ? 'ন্যূনতম' : 'MOQ'}: {formatNumberOnly(selectedLeather.moq, language)} sq.ft
                   </span>
@@ -775,7 +901,7 @@ export const CustomOrderPage: React.FC = () => {
                   <div className="flex items-center bg-[#18100C] rounded-xl border border-[#D4AF37]/30 px-3 py-1.5 shrink-0">
                     <button
                       type="button"
-                      onClick={() => setSqft(Math.max(selectedLeather.moq, sqft - 10))}
+                      onClick={() => handleSqftChange(Math.max(selectedLeather.moq, sqft - 10))}
                       className="p-1 hover:text-[#D4AF37] cursor-pointer"
                     >
                       <Minus className="w-3.5 h-3.5" />
@@ -785,7 +911,7 @@ export const CustomOrderPage: React.FC = () => {
                     </span>
                     <button
                       type="button"
-                      onClick={() => setSqft(sqft + 10)}
+                      onClick={() => handleSqftChange(sqft + 10)}
                       className="p-1 hover:text-[#D4AF37] cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
@@ -795,54 +921,123 @@ export const CustomOrderPage: React.FC = () => {
                   <input
                     type="range"
                     min={selectedLeather.moq}
-                    max="500"
+                    max="400"
                     step="5"
                     value={sqft}
-                    onChange={(e) => setSqft(Number(e.target.value))}
+                    onChange={(e) => handleSqftChange(Number(e.target.value))}
                     className="flex-1 accent-[#D4AF37] cursor-pointer h-2 bg-[#18100C] rounded-lg"
                   />
                 </div>
               </div>
 
-              {/* Financial Calculation Breakdown Table */}
+              {/* TWO-WAY SYNC 3: Delivery Country Selector inside Summary Box */}
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] mb-1.5">
+                  {language === 'BN' ? 'ডেলিভারি গন্তব্য (বাম পাশের সাথে সিঙ্ক):' : 'Delivery Destination (Synced):'}
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDestinationChange('domestic')}
+                    className={`py-2 px-2.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
+                      deliveryDestination === 'domestic'
+                        ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
+                        : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/25 hover:border-[#D4AF37]/50'
+                    }`}
+                  >
+                    <Truck className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>Inside Country (৳10/sqft)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDestinationChange('international')}
+                    className={`py-2 px-2.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all flex items-center justify-center gap-1.5 ${
+                      deliveryDestination === 'international'
+                        ? 'bg-[#3A271C] text-[#FDFBF7] border-[#D4AF37] ring-1 ring-[#D4AF37]'
+                        : 'bg-[#18100C] text-[#D4C5B9] border-[#D4AF37]/25 hover:border-[#D4AF37]/50'
+                    }`}
+                  >
+                    <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>Outside Country ($1.50/sqft)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Live Specs Badges from Left Form */}
+              <div className="p-3 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 space-y-1.5 text-[11px]">
+                <div className="flex justify-between">
+                  <span className="text-[#A69282]">{language === 'BN' ? 'নির্বাচিত শেড:' : 'Color Shade:'}</span>
+                  <span className="font-semibold text-[#FDFBF7]">{customPantone ? `${selectedColorName} (${customPantone})` : selectedColorName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#A69282]">{language === 'BN' ? 'ডিবসিং ও ফয়েল:' : 'Debossing / Foil:'}</span>
+                  <span className="font-semibold text-[#FDFBF7]">
+                    {customLogoText.trim() ? `"${customLogoText}"` : 'None'} ({foilOption === 'gold' ? '24k Gold' : foilOption === 'silver' ? 'Silver' : foilOption === 'blind' ? 'Blind' : 'Raw'})
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#A69282]">{language === 'BN' ? 'প্রাপকের ঠিকানা:' : 'Ship To:'}</span>
+                  <span className="font-semibold text-[#FDFBF7] truncate max-w-[160px]">
+                    {fullName.trim() ? `${fullName}${city.trim() ? `, ${city}` : ''}` : (language === 'BN' ? 'ঠিকানা পূরণ করুন' : 'Fill Address')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Transparent Itemized Financial Calculation Breakdown */}
               <div className="space-y-2.5 pt-3 border-t border-[#D4AF37]/20 text-xs">
                 
+                {/* 1. Base Leather Price */}
                 <div className="flex justify-between items-center text-[#D4C5B9]">
-                  <span>{language === 'BN' ? 'চামড়ার মোট মূল্য' : 'Leather Base Cost'}:</span>
+                  <span>{language === 'BN' ? '১. বেস চামড়ার মূল্য' : '1. Base Leather Price'}:</span>
                   <span className="font-semibold text-[#FDFBF7]">
                     {formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}
                   </span>
                 </div>
+                <div className="text-[10px] text-[#A69282] text-right">
+                  {sqft} sq.ft × {formatPrice(unitPriceUSD, unitPriceBDT, language, { perSqft: true, decimals: true })}
+                </div>
 
+                {/* 2. Customization Fee */}
                 <div className="flex justify-between items-center text-[#D4C5B9]">
-                  <span>{language === 'BN' ? 'কাস্টম ডিবসিং ও মিলিং' : 'Custom Debossing / Milling'}:</span>
+                  <span>{language === 'BN' ? '২. কাস্টম ডিবসিং ও মিলিং' : '2. Customization Fee'}:</span>
                   <span className="text-emerald-400 font-semibold">
-                    {language === 'BN' ? 'কমপ্লিমেন্টারি (৳০)' : 'Complimentary ($0)'}
+                    {language === 'BN' ? 'কমপ্লিমেন্টারি (৳০ / $০)' : 'Complimentary ($0 / ৳0)'}
                   </span>
                 </div>
 
+                {/* 3. Dynamic Weight/Sq.Ft Delivery Charge */}
                 <div className="flex justify-between items-center text-[#D4C5B9]">
                   <span className="flex items-center gap-1.5">
-                    <Truck className="w-3.5 h-3.5 text-[#D4AF37]" />
-                    <span>{deliveryDestination === 'domestic' ? (language === 'BN' ? 'অভ্যন্তরীণ ডেলিভারি' : 'Domestic Freight') : (language === 'BN' ? 'আন্তর্জাতিক এয়ার কার্গো' : 'International Air Cargo')}:</span>
+                    {deliveryDestination === 'domestic' ? <Truck className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                    <span>{deliveryDestination === 'domestic' ? (language === 'BN' ? '৩. দেশের ভেতরে ডেলিভারি চার্জ' : '3. Domestic Delivery Charge') : (language === 'BN' ? '৩. আন্তর্জাতিক এয়ার ফ্রেইট' : '3. International Air Freight')}:</span>
                   </span>
-                  <span className="font-semibold text-[#E5C365]">
-                    +{formatPrice(deliveryFeeUSD, deliveryFeeBDT, language, { decimals: true })}
+                  {/* Displayed in BDT for domestic and in USD for international */}
+                  <span className="font-bold text-[#E5C365]">
+                    {deliveryDestination === 'domestic' ? `+৳${deliveryFeeBDT.toLocaleString()}` : `+$${deliveryFeeUSD.toFixed(2)} USD`}
                   </span>
                 </div>
+                <div className="text-[10px] text-[#E5C365]/90 text-right font-mono">
+                  {deliveryDestination === 'domestic' ? `৳10 / sq.ft (50+ sqft weight rate)` : `$1.50 / sq.ft (air cargo weight rate)`}
+                </div>
 
-                {/* Grand Total */}
-                <div className="pt-3 border-t border-[#D4AF37]/30 flex justify-between items-baseline">
+                {/* Grand Total Price */}
+                <div className="pt-3 border-t-2 border-[#D4AF37]/30 flex justify-between items-baseline">
                   <div>
                     <span className="text-xs uppercase font-extrabold tracking-widest text-[#D4AF37] block">
-                      {language === 'BN' ? 'সর্বমোট প্রদেয় মূল্য' : 'Grand Total'}
+                      {language === 'BN' ? 'সর্বমোট প্রদেয় মূল্য' : 'Grand Total Price'}
                     </span>
                     <span className="text-[10px] text-[#A69282]">
-                      {deliveryDestination === 'domestic' ? 'VAT & Domestic Logistics Included' : 'Export Docs & Air Freight Included'}
+                      Base + Custom + Dynamic Delivery
                     </span>
                   </div>
-                  <div className="font-heading text-2xl sm:text-3xl font-extrabold text-[#FDFBF7] drop-shadow-md">
-                    {formatPrice(grandTotalUSD, grandTotalBDT, language, { decimals: true })}
+                  <div className="text-right">
+                    <div className="font-heading text-2xl sm:text-3xl font-extrabold text-[#FDFBF7] drop-shadow-md">
+                      {deliveryDestination === 'domestic' ? `৳${grandTotalBDT.toLocaleString()}` : `$${grandTotalUSD.toFixed(2)}`}
+                    </div>
+                    <div className="text-[11px] text-[#A69282] font-mono mt-0.5">
+                      {deliveryDestination === 'domestic' ? `$${grandTotalUSD.toFixed(2)} USD` : `৳${grandTotalBDT.toLocaleString()} BDT`}
+                    </div>
                   </div>
                 </div>
 
@@ -856,13 +1051,13 @@ export const CustomOrderPage: React.FC = () => {
                   className="w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all transform active:scale-98"
                 >
                   <MessageCircle className="w-5 h-5 text-[#170F0B] fill-[#170F0B]/20" />
-                  <span>{language === 'BN' ? 'অর্ডার পাঠান (হোয়াটসঅ্যাপ)' : 'Send Order via WhatsApp'}</span>
+                  <span>{language === 'BN' ? 'অর্ডার পাঠান (Send Order)' : 'Send Order'}</span>
                 </button>
 
                 <p className="text-[11px] text-center text-[#A69282] mt-2.5 leading-normal">
                   {language === 'BN'
-                    ? '🔒 "Send Order" চাপলে স্বয়ংক্রিয়ভাবে সকল বিবরণসহ সরাসরি আমাদের অফিসিয়াল হোয়াটসঅ্যাপে চ্যাট চালু হবে।'
-                    : '🔒 Clicking "Send Order" automatically formats your complete specifications into a direct WhatsApp message to +8801905206450.'}
+                    ? '🔒 "Send Order" চাপলে স্বয়ংক্রিয়ভাবে সকল পণ্যের বিবরণ, পূর্ণ ঠিকানা, ডায়নামিক শিপিং ও সর্বমোট মূল্যসহ সরাসরি আমাদের অফিসিয়াল হোয়াটসঅ্যাপে (01905206450) পাঠানো হবে।'
+                    : '🔒 "Send Order" compiles all itemized specs, full address, dynamic shipping, and grand total into a direct WhatsApp message to +8801905206450.'}
                 </p>
               </div>
 
@@ -874,7 +1069,7 @@ export const CustomOrderPage: React.FC = () => {
 
       </div>
 
-      {/* Confirmation Modal upon Submission */}
+      {/* Confirmation Receipt Modal upon Submission */}
       <AnimatePresence>
         {submittedOrder && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -893,7 +1088,7 @@ export const CustomOrderPage: React.FC = () => {
                   {language === 'BN' ? 'অর্ডার সফলভাবে তৈরি হয়েছে!' : 'Order Dispatched Successfully!'}
                 </span>
                 <h3 className="font-heading text-2xl font-bold text-[#FDFBF7] mt-1">
-                  {language === 'BN' ? 'হোয়াটসঅ্যাপে চ্যাট সংযুক্ত হচ্ছে...' : 'WhatsApp Chat Connected...'}
+                  {language === 'BN' ? 'হোয়াটসঅ্যাপ চ্যাটে পাঠানো হচ্ছে...' : 'WhatsApp Chat Connected...'}
                 </h3>
                 <p className="text-xs text-[#D4C5B9] mt-2 leading-relaxed">
                   {language === 'BN'
@@ -916,8 +1111,14 @@ export const CustomOrderPage: React.FC = () => {
                   <span className="font-bold text-[#FDFBF7]">{submittedOrder.leatherName} ({submittedOrder.sqft} sq.ft)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#A69282]">Grand Total:</span>
-                  <span className="font-bold text-[#D4AF37]">{submittedOrder.grandTotalFormatted}</span>
+                  <span className="text-[#A69282]">Delivery Fee:</span>
+                  <span className="font-bold text-[#E5C365]">{submittedOrder.dynamicDeliveryFeeFormatted}</span>
+                </div>
+                <div className="flex justify-between pt-1 border-t border-[#D4AF37]/20">
+                  <span className="text-[#D4AF37] font-bold">Grand Total:</span>
+                  <span className="font-bold text-[#D4AF37] text-sm">
+                    {submittedOrder.grandTotalFormatted} <span className="text-[10px] text-[#A69282]">({submittedOrder.grandTotalSecondary})</span>
+                  </span>
                 </div>
               </div>
 
