@@ -64,13 +64,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return language === 'BN' ? obj.bn : obj.en;
   };
 
+  // Dynamic Route Normalizer
+  const normalizePath = (path: string): string => {
+    const lower = (path || '').toLowerCase().trim();
+    if (lower.startsWith('/catalog/')) {
+      const parts = lower.split('/');
+      const slug = parts[2] ? parts[2].split('?')[0].split('#')[0] : '';
+      return slug ? `/catalog/${slug}` : '/';
+    }
+    if (lower.includes('custom-order') || lower.includes('checkout')) {
+      return '/custom-order';
+    }
+    return '/';
+  };
+
   // Client Routing State
   const [currentPath, setCurrentPath] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      const p = window.location.pathname.toLowerCase();
-      if (p.includes('custom-order') || p.includes('checkout')) {
-        return '/custom-order';
-      }
+      return normalizePath(window.location.pathname);
     }
     return '/';
   });
@@ -78,12 +89,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     const handlePopState = () => {
       if (typeof window !== 'undefined') {
-        const p = window.location.pathname.toLowerCase();
-        if (p.includes('custom-order') || p.includes('checkout')) {
-          setCurrentPath('/custom-order');
-        } else {
-          setCurrentPath('/');
-        }
+        setCurrentPath(normalizePath(window.location.pathname));
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -91,8 +97,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   const navigateTo = (path: string) => {
-    const isCustomOrder = path.includes('custom-order') || path.includes('checkout');
-    const normalized = isCustomOrder ? '/custom-order' : '/';
+    const normalized = normalizePath(path);
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', normalized);
       window.scrollTo({ top: 0, behavior: 'smooth' });

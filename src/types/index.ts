@@ -19,6 +19,37 @@ export interface TierPrice {
   label: LocalizedString;
 }
 
+export interface LeatherSpecs {
+  averageHideSize: LocalizedString;
+  thickness: LocalizedString;
+  weight: LocalizedString;
+  tanningMethod: LocalizedString;
+  temper: LocalizedString;
+  finish: LocalizedString;
+  bestSuitedFor: LocalizedString[];
+  origin: LocalizedString;
+  certifications: string[];
+}
+
+export interface LeatherVideo {
+  youtubeId: string;
+  title: LocalizedString;
+  desc: LocalizedString;
+  channel: string;
+}
+
+export interface LeatherGalleryImage {
+  url: string;
+  alt: LocalizedString;
+  label: LocalizedString;
+}
+
+export interface LeatherSEO {
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
+}
+
 export interface LeatherItem {
   id: string;
   name: LocalizedString;
@@ -32,6 +63,10 @@ export interface LeatherItem {
   colors: LeatherColor[];
   image: string;
   badge?: LocalizedString;
+  specs?: LeatherSpecs;
+  video?: LeatherVideo;
+  gallery?: LeatherGalleryImage[];
+  seo?: LeatherSEO;
 }
 
 export interface CartItem {

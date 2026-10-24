@@ -6,6 +6,7 @@ import { CustomOrderSection } from './components/CustomOrderSection';
 import { LeatherCatalog } from './components/LeatherCatalog';
 import { CostCalculator } from './components/CostCalculator';
 import { CustomOrderPage } from './components/CustomOrderPage';
+import { ProductDetailPage } from './components/ProductDetailPage';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { AuthModal } from './components/AuthModal';
@@ -20,9 +21,11 @@ const MainContent: React.FC = () => {
       {/* 1. Header & Navbar with Language Switcher, Search, Cart & WhatsApp */}
       <Header />
 
-      {/* Main Content: Dedicated Custom Order Page OR Home Page */}
+      {/* Main Content: Dedicated PDP OR Dedicated Custom Order Page OR Home Page */}
       <main className="flex-1">
-        {currentPath === '/custom-order' ? (
+        {currentPath.startsWith('/catalog/') ? (
+          <ProductDetailPage />
+        ) : currentPath === '/custom-order' ? (
           <CustomOrderPage />
         ) : (
           <>
