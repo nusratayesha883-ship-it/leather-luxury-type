@@ -2,7 +2,7 @@ import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { TrustBadges } from './components/TrustBadges';
+import { CustomOrderSection } from './components/CustomOrderSection';
 import { LeatherCatalog } from './components/LeatherCatalog';
 import { CostCalculator } from './components/CostCalculator';
 import { CustomOrderPage } from './components/CustomOrderPage';
@@ -29,8 +29,8 @@ const MainContent: React.FC = () => {
             {/* 2. Hero Section (Full width, dark texture, dual CTAs) */}
             <Hero />
 
-            {/* 3. About Atelier & Trust Badges */}
-            <TrustBadges />
+            {/* 3. 4 Main Order / Customization Form Boxes & Real-Time Sync Summary */}
+            <CustomOrderSection />
 
             {/* 4. 9 High-Level Leather Catalog (Grid, filters, swatches, tiered pricing) */}
             <LeatherCatalog />

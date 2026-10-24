@@ -182,8 +182,8 @@ export const CustomOrderPage: React.FC = () => {
       : `$${deliveryFeeUSD.toFixed(2)} USD (Rate: $1.50 / sq.ft Air Cargo)`;
 
     const paymentLabel = 
-      paymentMethod === 'bkash' ? 'bKash (01905206450)' :
-      paymentMethod === 'nagad' ? 'Nagad (01905206450)' :
+      paymentMethod === 'bkash' ? 'bKash (01353091099)' :
+      paymentMethod === 'nagad' ? 'Nagad (01353091099)' :
       paymentMethod === 'bank' ? 'Bank Wire Transfer' : 'Card / Online Invoice';
 
     // Build the structured WhatsApp message with transparent itemized cost breakdown
@@ -212,7 +212,8 @@ export const CustomOrderPage: React.FC = () => {
       `• Dynamic Delivery Charge: *${dynamicRateNote}*\n\n` +
       `💳 *PAYMENT METHOD:*\n` +
       `• Channel: *${paymentLabel}*\n` +
-      `• TrxID / Note: *${paymentNote.trim() || 'Pending Invoice / PI'}*\n` +
+      `• Official bKash/Nagad Number: *01353091099*\n` +
+      `• TrxID / Payment Note: *${paymentNote.trim() || 'Advance sent to 01353091099'}*\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
       `💰 *ITEMIZED COST BREAKDOWN:*\n` +
       `• Base Leather: ${formatPrice(leatherTotalUSD, leatherTotalBDT, language, { decimals: true })}\n` +
@@ -752,10 +753,10 @@ export const CustomOrderPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'পেমেন্ট মাধ্যম নির্বাচন ও ট্রানজ্যাকশন নোট' : 'Payment Method & Transaction Note'}
+                    {language === 'BN' ? 'পেমেন্ট মাধ্যম ও ট্রানজ্যাকশন আইডি (TrxID)' : 'Payment Method & Transaction Note'}
                   </h3>
                   <p className="text-xs text-[#D4C5B9]">
-                    {language === 'BN' ? 'বিকাশ, নগদ, ব্যাংক ওয়্যার অথবা কার্ড' : 'Select bKash, Nagad, Bank Wire, or Card'}
+                    {language === 'BN' ? 'অফিশিয়াল বিকাশ ও নগদ নম্বর: 01353091099' : 'Official bKash & Nagad Number: 01353091099'}
                   </p>
                 </div>
               </div>
@@ -765,8 +766,8 @@ export const CustomOrderPage: React.FC = () => {
                 {/* 4 Payment Options Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { id: 'bkash', label: 'bKash', num: '01905206450' },
-                    { id: 'nagad', label: 'Nagad', num: '01905206450' },
+                    { id: 'bkash', label: 'bKash', num: '01353091099' },
+                    { id: 'nagad', label: 'Nagad', num: '01353091099' },
                     { id: 'bank', label: 'Bank Wire', num: 'BRAC / City Bank' },
                     { id: 'card', label: 'Card / Gateway', num: 'Visa / Mastercard' },
                   ].map((p) => {
@@ -789,40 +790,77 @@ export const CustomOrderPage: React.FC = () => {
                   })}
                 </div>
 
-                {/* Account Details Box */}
-                <div className="p-3.5 rounded-xl bg-[#18100C] border border-[#D4AF37]/20 text-xs text-[#D4C5B9] space-y-1">
+                {/* Explicit Official Payment Instruction Box for 01353091099 */}
+                <div className="p-4 rounded-2xl bg-[#18100C] border border-[#D4AF37]/35 text-xs text-[#D4C5B9] space-y-2">
                   {paymentMethod === 'bkash' && (
-                    <p>
-                      📱 <strong>bKash Send/Payment:</strong> <span className="text-[#E5C365] font-mono font-bold">01905206450</span> (Personal/Merchant). Enter your bKash TrxID below.
-                    </p>
+                    <div>
+                      <div className="flex items-center gap-2 text-[#E5C365] font-bold mb-1">
+                        <span>📱 bKash Official Account:</span>
+                        <span className="font-mono text-sm px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#FDFBF7]">
+                          01353091099
+                        </span>
+                      </div>
+                      <p className="leading-relaxed">
+                        {language === 'BN'
+                          ? 'অনুগ্রহ করে 01353091099 নম্বরে বিকাশ (Send Money / Payment)-এর মাধ্যমে অর্ডারের পেমেন্ট বা অগ্রিম পরিশোধ করুন এবং প্রাপ্ত ট্রানজ্যাকশন আইডি (TrxID) নিচের বক্সে লিখুন।'
+                          : 'Please send payment or advance to 01353091099 via bKash (Personal/Merchant), then input your Transaction ID (TrxID) below before sending your order via WhatsApp.'}
+                      </p>
+                    </div>
                   )}
+
                   {paymentMethod === 'nagad' && (
-                    <p>
-                      📱 <strong>Nagad Send/Payment:</strong> <span className="text-[#E5C365] font-mono font-bold">01905206450</span>. Enter your Nagad TrxID below.
-                    </p>
+                    <div>
+                      <div className="flex items-center gap-2 text-[#E5C365] font-bold mb-1">
+                        <span>📱 Nagad Official Account:</span>
+                        <span className="font-mono text-sm px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#FDFBF7]">
+                          01353091099
+                        </span>
+                      </div>
+                      <p className="leading-relaxed">
+                        {language === 'BN'
+                          ? 'অনুগ্রহ করে 01353091099 নম্বরে নগদ (Send Money / Payment)-এর মাধ্যমে অর্ডারের পেমেন্ট বা অগ্রিম পরিশোধ করুন এবং প্রাপ্ত ট্রানজ্যাকশন আইডি (TrxID) নিচের বক্সে লিখুন।'
+                          : 'Please send payment or advance to 01353091099 via Nagad (Personal/Merchant), then input your Transaction ID (TrxID) below before sending your order via WhatsApp.'}
+                      </p>
+                    </div>
                   )}
+
                   {paymentMethod === 'bank' && (
-                    <p>
-                      🏦 <strong>Bank Wire Transfer:</strong> Official Tannery Pro-forma Invoice (PI) with Swift / IBAN will be generated upon submission.
-                    </p>
+                    <div>
+                      <div className="text-[#E5C365] font-bold mb-1">
+                        🏦 Official Tannery Bank Wire Transfer:
+                      </div>
+                      <p className="leading-relaxed">
+                        {language === 'BN'
+                          ? 'অর্ডার সাবমিট করলে অফিশিয়াল ট্যানারি প্রোফরমা ইনভয়েস (PI) ও BRAC / City Bank হিসাব নম্বর প্রদান করা হবে। নিচে আপনার ব্যাংক রেফারেন্স লিখুন।'
+                          : 'Official Tannery Pro-forma Invoice (PI) with Swift / IBAN details will be generated upon submission. Enter your bank reference or "Invoice Required".'}
+                      </p>
+                    </div>
                   )}
+
                   {paymentMethod === 'card' && (
-                    <p>
-                      💳 <strong>Card Payment:</strong> Direct online invoice payment link (Visa/Mastercard via Stripe) will be shared directly with your confirmation.
-                    </p>
+                    <div>
+                      <div className="text-[#E5C365] font-bold mb-1">
+                        💳 Secure Card / Online Gateway:
+                      </div>
+                      <p className="leading-relaxed">
+                        {language === 'BN'
+                          ? 'অনলাইন ভিসা/মাস্টারকার্ড পেমেন্ট লিংক আপনার হোয়াটসঅ্যাপ কনফার্মেশনের সাথে সরাসরি পাঠিয়ে দেওয়া হবে।'
+                          : 'Secure online card payment link (Visa/Mastercard via Stripe) will be dispatched directly to your WhatsApp confirmation.'}
+                      </p>
+                    </div>
                   )}
                 </div>
 
                 {/* Payment Note / Transaction ID Input */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-2">
-                    {language === 'BN' ? 'পেমেন্ট নোট / ট্রানজ্যাকশন আইডি (TrxID)' : 'Payment Note / Transaction ID (TrxID)'}
+                    {language === 'BN' ? 'পেমেন্ট নোট / ট্রানজ্যাকশন আইডি (TrxID) *' : 'Payment Note / Transaction ID (TrxID) *'}
                   </label>
                   <input
                     type="text"
                     value={paymentNote}
                     onChange={(e) => setPaymentNote(e.target.value)}
-                    placeholder={language === 'BN' ? 'যেমন: 9B841A02 বা ইনভয়েসের পর পরিশোধ করব' : 'e.g. TRX9B841029 or "Will wire after Pro-forma invoice"'}
+                    placeholder={language === 'BN' ? 'যেমন: 9B841A02 বা 01353091099 এ বিকাশ করেছি' : 'e.g. TRX9B841029 or "Advance sent via bKash to 01353091099"'}
                     className="w-full bg-[#18100C] text-xs text-[#FDFBF7] px-4 py-3 rounded-xl border border-[#D4AF37]/25 focus:outline-none focus:border-[#D4AF37] placeholder:text-[#8D7768]"
                   />
                 </div>
