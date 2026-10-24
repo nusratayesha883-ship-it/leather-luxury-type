@@ -1,25 +1,41 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles, Sliders } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { TRANSLATIONS } from '../data/translations';
+import { MagneticButton } from './MagneticButton';
+import { useSmoothScroll } from './SmoothScroll';
 
 export const Hero: React.FC = () => {
   const { l, navigateTo } = useApp();
+  const { scrollTo } = useSmoothScroll();
   const t = TRANSLATIONS.hero;
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax scrolling for background hide texture
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '24%']);
+  const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.2]);
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollTo(`#${id}`);
   };
 
   return (
-    <section className="relative w-full h-[62vh] min-h-[520px] max-h-[700px] overflow-hidden flex items-center justify-center group my-0">
-      
-      {/* 100% Genuine Full-Grain Luxury Leather Texture Background with Hover Zoom FX */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative w-full h-[64vh] min-h-[520px] max-h-[720px] overflow-hidden flex items-center justify-center group my-0"
+    >
+      {/* 100% Genuine Full-Grain Luxury Leather Texture Background with Parallax & Hover Zoom FX */}
+      <motion.div
+        style={{ y: backgroundY, scale: backgroundScale }}
+        className="absolute inset-0 w-full h-full overflow-hidden will-change-transform"
+      >
         <img
           src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=2400&q=85"
           alt="100% Genuine Full-Grain Luxury Leather Hide Texture"
@@ -30,12 +46,14 @@ export const Hero: React.FC = () => {
         {/* Deep Luxury Espresso & Cognac Gradient Overlay specifically preserving the genuine leather grain */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#170F0B]/95 via-[#2E1D14]/85 to-[#170F0B]/92" />
         {/* Subtle radial ambient warmth */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.22)_0%,transparent_75%)]" />
-      </div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.24)_0%,transparent_75%)]" />
+      </motion.div>
 
       {/* Content Container with generous padding so text never touches top or edges */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center flex flex-col items-center py-12">
-        
+      <motion.div
+        style={{ opacity: textOpacity }}
+        className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center flex flex-col items-center py-12"
+      >
         {/* Luxury Top Tag */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
@@ -67,7 +85,7 @@ export const Hero: React.FC = () => {
           {l(t.subheadline)}
         </motion.p>
 
-        {/* Dual CTAs with smooth hover FX */}
+        {/* Dual Magnetic CTAs with smooth shimmer & hover FX */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,25 +93,25 @@ export const Hero: React.FC = () => {
           className="mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
         >
           {/* CTA 1: Explore Catalog */}
-          <button
+          <MagneticButton
             onClick={() => scrollToSection('catalog')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold text-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold text-sm font-bold tracking-wide shadow-lg"
           >
             <span>{l(t.ctaExplore)}</span>
             <ArrowRight className="w-4 h-4 text-[#170F0B]" />
-          </button>
+          </MagneticButton>
 
           {/* CTA 2: Request Custom Service */}
-          <button
+          <MagneticButton
             onClick={() => navigateTo('/custom-order')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#271B14]/80 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all backdrop-blur-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#271B14]/85 hover:bg-[#34241B] text-[#FDFBF7] hover:text-[#D4AF37] text-sm font-medium tracking-wide border border-[#D4AF37]/40 hover:border-[#D4AF37] shadow-md"
           >
             <Sliders className="w-4 h-4 text-[#D4AF37]" />
             <span>{l(t.ctaCustom)}</span>
-          </button>
+          </MagneticButton>
         </motion.div>
 
-      </div>
+      </motion.div>
     </section>
   );
 };

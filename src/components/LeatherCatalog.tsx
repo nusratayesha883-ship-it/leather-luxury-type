@@ -5,6 +5,8 @@ import { useApp } from '../context/AppContext';
 import { LEATHER_CATALOG } from '../data/leatherCatalog';
 import { TRANSLATIONS } from '../data/translations';
 import { formatPrice, formatNumberOnly } from '../data/formatters';
+import { ScrollReveal } from './ScrollReveal';
+import { MagneticButton } from './MagneticButton';
 
 export const LeatherCatalog: React.FC = () => {
   const {
@@ -46,7 +48,7 @@ export const LeatherCatalog: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-5xl xl:max-w-6xl mx-auto mb-12">
+        <ScrollReveal className="text-center max-w-5xl xl:max-w-6xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#261A13] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Artisan Tannery Standards</span>
@@ -57,7 +59,7 @@ export const LeatherCatalog: React.FC = () => {
           <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal leading-relaxed lg:whitespace-nowrap">
             {l(t.subtitle)}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Filter Navigation Pills */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
@@ -101,7 +103,7 @@ export const LeatherCatalog: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.35 }}
                 onClick={() => navigateTo('/catalog/' + item.id)}
-                className="luxury-card rounded-3xl overflow-hidden flex flex-col group border border-[#D4AF37]/25 bg-[#261A13] cursor-pointer"
+                className="luxury-card glass-sheen rounded-3xl overflow-hidden flex flex-col group border border-[#D4AF37]/25 bg-[#261A13] cursor-pointer"
               >
                 
                 {/* High-Res Leather Image Container */}
@@ -110,7 +112,7 @@ export const LeatherCatalog: React.FC = () => {
                     src={item.image}
                     alt={l(item.name)}
                     loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out leather-swatch-zoom"
                   />
 
                   {/* Gradient & Vignette */}
@@ -158,7 +160,7 @@ export const LeatherCatalog: React.FC = () => {
                     </div>
 
                     {/* View Details Button (Navigates directly to dedicated PDP) */}
-                    <button
+                    <MagneticButton
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -168,7 +170,7 @@ export const LeatherCatalog: React.FC = () => {
                     >
                       <Eye className="w-3.5 h-3.5 text-[#170F0B]" />
                       <span>{l(t.viewDetails)}</span>
-                    </button>
+                    </MagneticButton>
                   </div>
 
                 </div>

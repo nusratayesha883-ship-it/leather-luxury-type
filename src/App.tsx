@@ -13,12 +13,18 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 
+import { SmoothScroll } from './components/SmoothScroll';
+import { AtelierCursor } from './components/AtelierCursor';
+
 const MainContent: React.FC = () => {
   const { currentPath } = useApp();
 
   return (
     <div className="min-h-screen bg-[#170F0B] text-[#FDFBF7] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-[#170F0B]">
       
+      {/* Custom Luxury Atelier Cursor (Fine pointer desktop devices) */}
+      <AtelierCursor />
+
       {/* 1. Header & Navbar with Language Switcher, Search, Cart & WhatsApp */}
       <Header />
 
@@ -66,7 +72,9 @@ const MainContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <AppProvider>
-      <MainContent />
+      <SmoothScroll>
+        <MainContent />
+      </SmoothScroll>
     </AppProvider>
   );
 };

@@ -30,6 +30,8 @@ import type { DeliveryDestination, PaymentMethodType, LeatherItem, OrderRecord }
 import { insertOrderToSupabase, generateUniqueOrderId } from '../services/supabaseClient';
 import { syncOrderToGoogleSheets } from '../services/googleSheetsService';
 import { sendOrderConfirmationEmail, generateOrderConfirmationEmailHTML } from '../services/emailService';
+import { MagneticButton } from './MagneticButton';
+import { ScrollReveal, RevealItem } from './ScrollReveal';
 
 export const CustomOrderSection: React.FC = () => {
   const { language, l, customOrderDraft, updateCustomOrderDraft } = useApp();
@@ -345,13 +347,13 @@ export const CustomOrderSection: React.FC = () => {
         )}
 
         {/* 4 Main Order / Customization Form Boxes + Live Synced Summary (2-Column Layout) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <ScrollReveal direction="up" distance={25} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT COLUMN: 4 Form Boxes with Two-Way Sync (7 cols) */}
           <div className="lg:col-span-7 space-y-8">
             
             {/* BOX 1: Leather Type, Sq.Ft Quantity & Customization Options */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+            <RevealItem className="luxury-card glass-sheen luxury-order-box rounded-3xl p-6 sm:p-8 bg-[#221610] shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   1
@@ -551,10 +553,10 @@ export const CustomOrderSection: React.FC = () => {
                 </div>
 
               </div>
-            </div>
+            </RevealItem>
 
             {/* BOX 2: Complete Shipping Details Card */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+            <RevealItem className="luxury-card glass-sheen luxury-order-box rounded-3xl p-6 sm:p-8 bg-[#221610] shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   2
@@ -706,10 +708,10 @@ export const CustomOrderSection: React.FC = () => {
                 </div>
 
               </div>
-            </div>
+            </RevealItem>
 
             {/* BOX 3: Delivery Destination & Dynamic Weight/Sq.Ft Rate Selection Card */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+            <RevealItem className="luxury-card glass-sheen luxury-order-box rounded-3xl p-6 sm:p-8 bg-[#221610] shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   3
@@ -797,10 +799,10 @@ export const CustomOrderSection: React.FC = () => {
                 </div>
 
               </div>
-            </div>
+            </RevealItem>
 
             {/* BOX 4: Payment Method Integration Card with Official 01353091099 */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+            <RevealItem className="luxury-card glass-sheen luxury-order-box rounded-3xl p-6 sm:p-8 bg-[#221610] shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   4
@@ -920,14 +922,14 @@ export const CustomOrderSection: React.FC = () => {
                 </div>
 
               </div>
-            </div>
+            </RevealItem>
 
           </div>
 
           {/* RIGHT COLUMN: Sticky Order Summary Box with 2-Way Synced Controls (5 cols) */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
             
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
+            <RevealItem className="luxury-card glass-sheen luxury-order-box rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
               
               <div className="pb-4 border-b border-[#D4AF37]/25 flex items-center justify-between">
                 <div>
@@ -941,13 +943,13 @@ export const CustomOrderSection: React.FC = () => {
                 <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
               </div>
 
-              {/* Pre-Filled Product Card with 4:3 Swatch Image */}
-              <div className="flex gap-4 items-center p-3 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/20">
+              {/* Pre-Filled Product Card with 4:3 Swatch Image & smooth zoom */}
+              <div className="flex gap-4 items-center p-3 rounded-2xl bg-[#1A110C] border border-[#D4AF37]/20 group">
                 <div className="w-20 h-16 rounded-xl overflow-hidden aspect-[4/3] bg-black/40 border border-[#D4AF37]/30 shrink-0">
                   <img
                     src={selectedLeather.image}
                     alt={l(selectedLeather.name)}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover leather-swatch-zoom"
                   />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -1135,13 +1137,13 @@ export const CustomOrderSection: React.FC = () => {
 
               </div>
 
-              {/* Prominent Action Button: Send Order */}
+              {/* Prominent Action Button: Send Order with Magnetic Hover & Gold Shimmer */}
               <div className="pt-2">
-                <button
+                <MagneticButton
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleSendOrder}
-                  className={`w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] transition-all transform active:scale-98 ${
+                  className={`w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2.5 shadow-[0_6px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.6)] ${
                     isSubmitting ? 'opacity-80 cursor-wait' : ''
                   }`}
                 >
@@ -1156,7 +1158,7 @@ export const CustomOrderSection: React.FC = () => {
                       <span>{language === 'BN' ? 'অর্ডার পাঠান (Send Order)' : 'Send Order'}</span>
                     </>
                   )}
-                </button>
+                </MagneticButton>
 
                 <p className="text-[11px] text-center text-[#A69282] mt-2.5 leading-normal">
                   {language === 'BN'
@@ -1165,11 +1167,11 @@ export const CustomOrderSection: React.FC = () => {
                 </p>
               </div>
 
-            </div>
+            </RevealItem>
 
           </div>
 
-        </div>
+        </ScrollReveal>
 
       </div>
 

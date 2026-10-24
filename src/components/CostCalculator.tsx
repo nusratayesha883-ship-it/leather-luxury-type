@@ -4,6 +4,8 @@ import { useApp } from '../context/AppContext';
 import { LEATHER_CATALOG } from '../data/leatherCatalog';
 import { TRANSLATIONS } from '../data/translations';
 import { formatPrice, formatNumberOnly } from '../data/formatters';
+import { MagneticButton } from './MagneticButton';
+import { ScrollReveal } from './ScrollReveal';
 
 export const CostCalculator: React.FC = () => {
   const { language, l, addToCart, proceedToCustomOrder } = useApp();
@@ -37,7 +39,7 @@ export const CostCalculator: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header - NO B2B text */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <ScrollReveal className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#261A13] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             <Calculator className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{l(t.badge)}</span>
@@ -48,10 +50,11 @@ export const CostCalculator: React.FC = () => {
           <p className="text-sm sm:text-base text-[#D4C5B9] mt-3 font-normal leading-relaxed">
             {l(t.subtitle)}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Simplified Calculator Box */}
-        <div className="max-w-4xl mx-auto luxury-card rounded-3xl p-6 sm:p-10 bg-[#261A13] border border-[#D4AF37]/30 shadow-2xl">
+        <ScrollReveal className="max-w-4xl mx-auto">
+          <div className="luxury-card glass-sheen rounded-3xl p-6 sm:p-10 bg-[#261A13] border border-[#D4AF37]/30 shadow-2xl">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
@@ -165,14 +168,14 @@ export const CostCalculator: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="space-y-3 pt-2">
-                <button
+                <MagneticButton
                   type="button"
                   onClick={handleProceedToOrder}
                   className="w-full py-4 px-6 rounded-2xl btn-gold text-xs sm:text-sm font-bold uppercase tracking-wider text-[#170F0B] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.5)] transition-all group"
                 >
                   <span>{language === 'BN' ? 'কাস্টম অর্ডারে এগিয়ে যান' : 'Proceed to Custom Order'}</span>
                   <ArrowRight className="w-4 h-4 text-[#170F0B] group-hover:translate-x-1 transition-transform" />
-                </button>
+                </MagneticButton>
 
                 <button
                   type="button"
@@ -197,7 +200,8 @@ export const CostCalculator: React.FC = () => {
 
           </div>
 
-        </div>
+          </div>
+        </ScrollReveal>
 
       </div>
     </section>

@@ -41,37 +41,120 @@
   border-bottom: 1px solid rgba(212, 175, 55, 0.22);
 }
 
-/* Luxury card with subtle warm depth and gold glow on hover */
+/* Luxury card with subtle warm depth, champagne glow border & dark glassmorphism sheen */
 .luxury-card {
+  position: relative;
   background: #271B14;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease,
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.4s ease;
+  overflow: hidden;
 }
 
 .luxury-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(212, 175, 55, 0.65);
-  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.75), 0 0 20px rgba(212, 175, 55, 0.25);
+  transform: translateY(-5px);
+  border-color: rgba(229, 195, 101, 0.55);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8),
+              0 0 25px rgba(212, 175, 55, 0.25);
 }
 
-/* Gold CTA Button styling */
+/* Glassmorphism Sheen Light Sweep on Hover */
+.glass-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(229, 195, 101, 0.12) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+  transform: skewX(-25deg);
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
+}
+
+.glass-sheen:hover::after {
+  transform: translateX(350%) skewX(-25deg);
+}
+
+/* 4 Order Boxes Specialized Luxury Glow */
+.luxury-order-box {
+  background: linear-gradient(145deg, rgba(36, 23, 16, 0.95) 0%, rgba(26, 17, 12, 0.98) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease,
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-order-box:hover {
+  transform: translateY(-4px);
+  border-color: rgba(229, 195, 101, 0.5);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8),
+              0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+/* Ultra-smooth slow image zoom-in on leather swatches */
+.leather-swatch-zoom {
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), filter 0.75s ease;
+  will-change: transform;
+}
+
+.group:hover .leather-swatch-zoom,
+.luxury-card:hover .leather-swatch-zoom,
+.glass-sheen:hover .leather-swatch-zoom {
+  transform: scale(1.05);
+}
+
+/* Gold CTA Button styling with luxury shimmer */
 .btn-gold {
+  position: relative;
   background: linear-gradient(135deg, #E5C365 0%, #D4AF37 50%, #B89222 100%);
   color: #170F0B;
   font-weight: 700;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+  overflow: hidden;
 }
 
 .btn-gold:hover {
   background: linear-gradient(135deg, #F3D889 0%, #E5C365 50%, #C89E28 100%);
-  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.55);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(212, 175, 55, 0.55), 0 0 20px rgba(229, 195, 101, 0.3);
+  transform: translateY(-2px);
 }
 
 .btn-gold:active {
   transform: translateY(0);
+}
+
+/* Shimmer Sweep Animation Keyframes */
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-shimmer-sweep {
+  animation: shimmerSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Cognac Button styling */
@@ -79,7 +162,7 @@
   background: #4A3324;
   color: #FDFBF7;
   border: 1px solid rgba(212, 175, 55, 0.3);
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-cognac:hover {
@@ -88,6 +171,36 @@
   border-color: rgba(212, 175, 55, 0.6);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
   transform: translateY(-1px);
+}
+
+/* Custom Cursor Rules for fine pointer desktop devices */
+@media (hover: hover) and (pointer: fine) {
+  body.atelier-cursor-active,
+  body.atelier-cursor-active button,
+  body.atelier-cursor-active a,
+  body.atelier-cursor-active input,
+  body.atelier-cursor-active select,
+  body.atelier-cursor-active textarea,
+  body.atelier-cursor-active [role="button"] {
+    cursor: none !important;
+  }
+}
+
+/* Lenis smooth scrolling compatibility */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /* Custom Scrollbar styled for rich dark brown palette */

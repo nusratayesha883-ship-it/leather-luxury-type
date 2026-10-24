@@ -21,6 +21,8 @@ import { useApp } from '../context/AppContext';
 import { LEATHER_CATALOG } from '../data/leatherCatalog';
 import { formatPrice, formatNumberOnly } from '../data/formatters';
 import type { LeatherItem, LeatherColor } from '../types';
+import { MagneticButton } from './MagneticButton';
+import { ScrollReveal, RevealItem } from './ScrollReveal';
 
 export const ProductDetailPage: React.FC = () => {
   const {
@@ -340,7 +342,7 @@ export const ProductDetailPage: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out leather-swatch-zoom"
                 />
               </AnimatePresence>
 
@@ -525,7 +527,7 @@ export const ProductDetailPage: React.FC = () => {
             <div className="space-y-3 pt-2">
               
               {/* CTA 1: Order Custom Batch (Proceed to /custom-order checkout) */}
-              <button
+              <MagneticButton
                 type="button"
                 onClick={handleOrderCustomBatch}
                 className="w-full py-4 px-6 rounded-2xl btn-gold font-bold text-sm text-[#170F0B] flex items-center justify-center gap-3 shadow-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all cursor-pointer group"
@@ -534,10 +536,10 @@ export const ProductDetailPage: React.FC = () => {
                 <span className="tracking-wide uppercase font-extrabold">
                   {language === 'BN' ? 'কাস্টম অর্ডার ব্যাচ বুক করুন' : 'Order Custom Batch'}
                 </span>
-              </button>
+              </MagneticButton>
 
               {/* CTA 2: Calculate Cost for this Leather (Homepage Calculator with this preselected) */}
-              <button
+              <MagneticButton
                 type="button"
                 onClick={handleCalculateCost}
                 className="w-full py-3.5 px-6 rounded-2xl bg-[#281A12] hover:bg-[#342217] text-[#D4AF37] hover:text-[#FDFBF7] font-bold text-xs uppercase tracking-wider border border-[#D4AF37]/45 hover:border-[#D4AF37] flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-md"
@@ -546,7 +548,7 @@ export const ProductDetailPage: React.FC = () => {
                 <span>
                   {language === 'BN' ? 'এই চামড়ার মূল্য ক্যালকুলেট করুন' : 'Calculate Cost for this Leather'}
                 </span>
-              </button>
+              </MagneticButton>
 
               {/* Direct Add to Cart Action */}
               <button
@@ -619,94 +621,106 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* 6 Structured Technical Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <ScrollReveal className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" stagger={0.08}>
               
               {/* 1. Average Hide Size */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'গড় চামড়ার সাইজ (বর্গফুট)' : 'Average Hide Size (Sq.Ft)'}
-                </span>
-                <div className="font-heading text-lg font-bold text-[#FDFBF7]">
-                  {l(item.specs.averageHideSize)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'গড় চামড়ার সাইজ (বর্গফুট)' : 'Average Hide Size (Sq.Ft)'}
+                  </span>
+                  <div className="font-heading text-lg font-bold text-[#FDFBF7]">
+                    {l(item.specs.averageHideSize)}
+                  </div>
+                  <p className="text-xs text-[#A69282] leading-normal">
+                    {language === 'BN' ? 'হোল হাইড বা সাইড কাটিং এর সম্পূর্ণ ক্ষেত্রফল' : 'Natural usable surface area per hide with minimal perimeter trimmings'}
+                  </p>
                 </div>
-                <p className="text-xs text-[#A69282] leading-normal">
-                  {language === 'BN' ? 'হোল হাইড বা সাইড কাটিং এর সম্পূর্ণ ক্ষেত্রফল' : 'Natural usable surface area per hide with minimal perimeter trimmings'}
-                </p>
-              </div>
+              </RevealItem>
 
               {/* 2. Thickness / Gauge (Dual display in mm and ounces) */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'পুরুত্ব ও গজ (মিমি / আউন্স)' : 'Thickness / Gauge (mm & oz)'}
-                </span>
-                <div className="font-heading text-lg font-bold text-[#E5C365]">
-                  {l(item.specs.thickness)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'পুরুত্ব ও গজ (মিমি / আউন্স)' : 'Thickness / Gauge (mm & oz)'}
+                  </span>
+                  <div className="font-heading text-lg font-bold text-[#E5C365]">
+                    {l(item.specs.thickness)}
+                  </div>
+                  <p className="text-xs text-[#A69282] leading-normal">
+                    {language === 'BN' ? 'ট্যানারি ড্রাম স্প্লিটিং এ ক্যালিব্রেটেড সুষম পুরুত্ব' : 'Dual gauge calibrated across back, belly, and shoulder sections'}
+                  </p>
                 </div>
-                <p className="text-xs text-[#A69282] leading-normal">
-                  {language === 'BN' ? 'ট্যানারি ড্রাম স্প্লিটিং এ ক্যালিব্রেটেড সুষম পুরুত্ব' : 'Dual gauge calibrated across back, belly, and shoulder sections'}
-                </p>
-              </div>
+              </RevealItem>
 
               {/* 3. Weight Ratio */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'ঘনত্ব ও ওজন অনুপাত' : 'Sq.Ft Weight & Density Ratio'}
-                </span>
-                <div className="font-heading text-lg font-bold text-[#FDFBF7]">
-                  {l(item.specs.weight)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'ঘনত্ব ও ওজন অনুপাত' : 'Sq.Ft Weight & Density Ratio'}
+                  </span>
+                  <div className="font-heading text-lg font-bold text-[#FDFBF7]">
+                    {l(item.specs.weight)}
+                  </div>
+                  <p className="text-xs text-[#A69282] leading-normal">
+                    {language === 'BN' ? 'প্রতি বর্গফুটে প্রমিত ভর ও ফাইবার ঘনত্ব' : 'Calculated square footage density for precise shipping freight estimation'}
+                  </p>
                 </div>
-                <p className="text-xs text-[#A69282] leading-normal">
-                  {language === 'BN' ? 'প্রতি বর্গফুটে প্রমিত ভর ও ফাইবার ঘনত্ব' : 'Calculated square footage density for precise shipping freight estimation'}
-                </p>
-              </div>
+              </RevealItem>
 
               {/* 4. Tanning Method */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'ট্যানিং পদ্ধতি ও প্রক্রিয়া' : 'Tanning Process & Formula'}
-                </span>
-                <div className="font-heading text-base font-bold text-[#FDFBF7]">
-                  {l(item.specs.tanningMethod)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'ট্যানিং পদ্ধতি ও প্রক্রিয়া' : 'Tanning Process & Formula'}
+                  </span>
+                  <div className="font-heading text-base font-bold text-[#FDFBF7]">
+                    {l(item.specs.tanningMethod)}
+                  </div>
+                  <p className="text-xs text-[#A69282] leading-normal">
+                    {language === 'BN' ? 'পরিবেশবান্ধব ট্যানারি রসায়ন ও প্রাকৃতিক তেল মিশ্রণ' : 'Eco-compliant processing adhering to international leather sustainability standards'}
+                  </p>
                 </div>
-                <p className="text-xs text-[#A69282] leading-normal">
-                  {language === 'BN' ? 'পরিবেশবান্ধব ট্যানারি রসায়ন ও প্রাকৃতিক তেল মিশ্রণ' : 'Eco-compliant processing adhering to international leather sustainability standards'}
-                </p>
-              </div>
+              </RevealItem>
 
               {/* 5. Temper & Surface Finish */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'টেম্পার ও সারফেস ফিনিশ' : 'Temper & Finish Profile'}
-                </span>
-                <div className="font-heading text-base font-bold text-[#E5C365]">
-                  {l(item.specs.temper)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'টেম্পার ও সারফেস ফিনিশ' : 'Temper & Finish Profile'}
+                  </span>
+                  <div className="font-heading text-base font-bold text-[#E5C365]">
+                    {l(item.specs.temper)}
+                  </div>
+                  <p className="text-xs text-[#D4C5B9] mt-1">
+                    <strong>Finish:</strong> {l(item.specs.finish)}
+                  </p>
                 </div>
-                <p className="text-xs text-[#D4C5B9] mt-1">
-                  <strong>Finish:</strong> {l(item.specs.finish)}
-                </p>
-              </div>
+              </RevealItem>
 
               {/* 6. Tannery Origin & Certifications */}
-              <div className="p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
-                  {language === 'BN' ? 'উৎপত্তি ও সার্টিফাইড কোয়ালিটি' : 'Origin & Compliance'}
-                </span>
-                <div className="font-heading text-sm font-bold text-[#FDFBF7]">
-                  {l(item.specs.origin)}
+              <RevealItem>
+                <div className="luxury-card glass-sheen p-5 rounded-3xl bg-[#221610] border border-[#D4AF37]/25 space-y-2 hover:border-[#D4AF37]/50 transition-all shadow-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    {language === 'BN' ? 'উৎপত্তি ও সার্টিফাইড কোয়ালিটি' : 'Origin & Compliance'}
+                  </span>
+                  <div className="font-heading text-sm font-bold text-[#FDFBF7]">
+                    {l(item.specs.origin)}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {item.specs.certifications.map((cert, cIdx) => (
+                      <span
+                        key={cIdx}
+                        className="px-2 py-0.5 rounded-md bg-[#D4AF37]/15 text-[#E5C365] text-[10px] font-bold"
+                      >
+                        {cert}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {item.specs.certifications.map((cert, cIdx) => (
-                    <span
-                      key={cIdx}
-                      className="px-2 py-0.5 rounded-md bg-[#D4AF37]/15 text-[#E5C365] text-[10px] font-bold"
-                    >
-                      {cert}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              </RevealItem>
 
-            </div>
+            </ScrollReveal>
 
             {/* Best Suited For (Recommended Atelier Applications) */}
             <div className="p-6 rounded-3xl bg-[#1F140E] border border-[#D4AF37]/30 space-y-4">
@@ -808,20 +822,20 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
-            <button
+            <MagneticButton
               onClick={handleOrderCustomBatch}
               className="w-full sm:w-auto px-8 py-3.5 rounded-full btn-gold font-bold text-xs uppercase tracking-wider text-[#170F0B] shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sliders className="w-4 h-4 text-[#170F0B]" />
               <span>{language === 'BN' ? 'কাস্টম অর্ডার ব্যাচ বুক করুন' : 'Order Custom Batch'}</span>
-            </button>
-            <button
+            </MagneticButton>
+            <MagneticButton
               onClick={handleCalculateCost}
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#170F0B] hover:bg-[#221610] text-[#D4AF37] hover:text-[#FDFBF7] font-bold text-xs uppercase tracking-wider border border-[#D4AF37]/50 shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Calculator className="w-4 h-4 text-[#D4AF37]" />
               <span>{language === 'BN' ? 'মূল্য ক্যালকুলেটর দেখুন' : 'Calculate Cost for this Leather'}</span>
-            </button>
+            </MagneticButton>
           </div>
         </section>
 

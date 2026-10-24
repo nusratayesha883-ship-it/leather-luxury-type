@@ -33,6 +33,8 @@ import type { DeliveryDestination, PaymentMethodType, LeatherItem, OrderRecord }
 import { insertOrderToSupabase, generateUniqueOrderId } from '../services/supabaseClient';
 import { syncOrderToGoogleSheets } from '../services/googleSheetsService';
 import { sendOrderConfirmationEmail, generateOrderConfirmationEmailHTML } from '../services/emailService';
+import { MagneticButton } from './MagneticButton';
+import { ScrollReveal, RevealItem } from './ScrollReveal';
 
 export const CustomOrderPage: React.FC = () => {
   const { language, l, currentPath, navigateTo, customOrderDraft, updateCustomOrderDraft } = useApp();
@@ -359,7 +361,7 @@ export const CustomOrderPage: React.FC = () => {
         </div>
 
         {/* Page Header */}
-        <div className="text-center max-w-4xl mx-auto mb-10">
+        <ScrollReveal className="text-center max-w-4xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#261A13] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{language === 'BN' ? 'বেসপোক ট্যানারি অর্ডার সিস্টেম' : 'Bespoke Tannery Checkout'}</span>
@@ -372,7 +374,7 @@ export const CustomOrderPage: React.FC = () => {
               ? 'চামড়ার ধরণ, পরিমাণ, নির্দিষ্ট কালার শেড, লোগো এমবসিং ও শিপিং তথ্য নির্বাচন করুন। ডানপাশের সামারির সাথে তাৎক্ষণিক সমন্বয় হবে।'
               : 'Select leather hide, footage, custom finishes, and delivery country with instant real-time two-way syncing and transparent cost breakdown.'}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Validation Alert */}
         {validationError && (
@@ -383,26 +385,27 @@ export const CustomOrderPage: React.FC = () => {
         )}
 
         {/* Main 2-Column Responsive Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <ScrollReveal className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start" stagger={0.12}>
           
           {/* LEFT COLUMN: 4 Form Boxes with Two-Way Sync (7 cols) */}
           <div className="lg:col-span-7 space-y-8">
             
             {/* BOX 1: Leather Type, Sq.Ft Quantity & Customization Options */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
-                <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
-                  1
+            <RevealItem>
+              <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
+                  <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
+                    1
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
+                      {language === 'BN' ? 'চামড়ার ধরণ, পরিমাণ ও কাস্টমাইজেশন' : 'Leather Hide & Customization Specs'}
+                    </h3>
+                    <p className="text-xs text-[#D4C5B9]">
+                      {language === 'BN' ? 'চামড়া নির্বাচন, স্কয়ার ফিট পরিমাণ ও ফিনিশিং নির্ধারণ করুন' : 'Select hide, square footage, shade, and debossing'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FDFBF7]">
-                    {language === 'BN' ? 'চামড়ার ধরণ, পরিমাণ ও কাস্টমাইজেশন' : 'Leather Hide & Customization Specs'}
-                  </h3>
-                  <p className="text-xs text-[#D4C5B9]">
-                    {language === 'BN' ? 'চামড়া নির্বাচন, স্কয়ার ফিট পরিমাণ ও ফিনিশিং নির্ধারণ করুন' : 'Select hide, square footage, shade, and debossing'}
-                  </p>
-                </div>
-              </div>
 
               <div className="space-y-6">
                 
@@ -590,9 +593,11 @@ export const CustomOrderPage: React.FC = () => {
 
               </div>
             </div>
+          </RevealItem>
 
-            {/* BOX 2: Complete Shipping Details Card */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+          {/* BOX 2: Complete Shipping Details Card */}
+          <RevealItem>
+            <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   2
@@ -745,9 +750,11 @@ export const CustomOrderPage: React.FC = () => {
 
               </div>
             </div>
+          </RevealItem>
 
-            {/* BOX 3: Delivery Destination & Dynamic Weight/Sq.Ft Rate Selection Card */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+          {/* BOX 3: Delivery Destination & Dynamic Weight/Sq.Ft Rate Selection Card */}
+          <RevealItem>
+            <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   3
@@ -836,9 +843,11 @@ export const CustomOrderPage: React.FC = () => {
 
               </div>
             </div>
+          </RevealItem>
 
-            {/* BOX 4: Payment Method Integration Card */}
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
+          {/* BOX 4: Payment Method Integration Card */}
+          <RevealItem>
+            <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-[#221610] border border-[#D4AF37]/30 shadow-xl">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#D4AF37]/20">
                 <div className="w-8 h-8 rounded-lg bg-[#342217] flex items-center justify-center border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs">
                   4
@@ -959,13 +968,15 @@ export const CustomOrderPage: React.FC = () => {
 
               </div>
             </div>
+          </RevealItem>
 
-          </div>
+        </div>
 
-          {/* RIGHT COLUMN: Sticky Order Summary Box with 2-Way Synced Controls (5 cols) */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
-            
-            <div className="luxury-card rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
+        {/* RIGHT COLUMN: Sticky Order Summary Box with 2-Way Synced Controls (5 cols) */}
+        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
+          
+          <RevealItem>
+            <div className="luxury-order-box glass-sheen rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#2E1E16] via-[#241710] to-[#1C120D] border-2 border-[#D4AF37]/40 shadow-2xl space-y-6">
               
               <div className="pb-4 border-b border-[#D4AF37]/25 flex items-center justify-between">
                 <div>
@@ -985,7 +996,7 @@ export const CustomOrderPage: React.FC = () => {
                   <img
                     src={selectedLeather.image}
                     alt={l(selectedLeather.name)}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover leather-swatch-zoom"
                   />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -1175,7 +1186,7 @@ export const CustomOrderPage: React.FC = () => {
 
               {/* Prominent Action Button: Send Order */}
               <div className="pt-2">
-                <button
+                <MagneticButton
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleSendOrder}
@@ -1194,7 +1205,7 @@ export const CustomOrderPage: React.FC = () => {
                       <span>{language === 'BN' ? 'অর্ডার পাঠান (Send Order)' : 'Send Order'}</span>
                     </>
                   )}
-                </button>
+                </MagneticButton>
 
                 <p className="text-[11px] text-center text-[#A69282] mt-2.5 leading-normal">
                   {language === 'BN'
@@ -1204,12 +1215,13 @@ export const CustomOrderPage: React.FC = () => {
               </div>
 
             </div>
-
-          </div>
+          </RevealItem>
 
         </div>
 
-      </div>
+      </ScrollReveal>
+
+    </div>
 
       {/* Confirmation Receipt Modal upon Submission */}
       <AnimatePresence>
