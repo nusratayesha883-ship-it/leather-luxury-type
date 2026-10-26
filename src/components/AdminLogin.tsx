@@ -66,20 +66,13 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onAuthenticated }) => {
     setError(null);
     setIsSubmitting(true);
 
-    const configuredPassword = (import.meta.env.VITE_ADMIN_PASSWORD || '').trim();
-    const validPasswords = [
-      configuredPassword,
-      'luxe@admin2026',
-      'admin123',
-      'leather2026',
-    ].filter(Boolean);
-
+    const configuredPassword = (import.meta.env.VITE_ADMIN_PASSWORD || 'AM @2002').trim();
     const enteredUser = username.trim().toLowerCase();
     const enteredPass = password.trim();
 
-    // Check credentials (accepts 'admin' or any email, with configured password or standard defaults)
+    // Check credentials: only 'AM @2002' unlocks the executive panel
     const isValidUser = enteredUser === 'admin' || enteredUser.includes('@') || enteredUser.length >= 3;
-    const isValidPass = validPasswords.includes(enteredPass);
+    const isValidPass = enteredPass === configuredPassword;
 
     if (isValidUser && isValidPass) {
       // Clear security counters on success
@@ -231,7 +224,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onAuthenticated }) => {
               </div>
             </div>
 
-            {/* Remember me & Passphrase Hint Toggle */}
+            {/* Remember me */}
             <div className="flex items-center justify-between text-xs pt-1">
               <label className="flex items-center gap-2 text-[#D4C5B9] cursor-pointer select-none">
                 <input
@@ -243,8 +236,8 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onAuthenticated }) => {
                 <span>Remember this session</span>
               </label>
 
-              <span className="text-[11px] text-[#A69282]">
-                Key: <code className="text-[#E5C365] bg-[#140D08] px-1.5 py-0.5 rounded border border-[#D4AF37]/20 font-mono">luxe@admin2026</code>
+              <span className="text-[11px] text-[#8D7768] font-mono">
+                Executive Portal
               </span>
             </div>
 
