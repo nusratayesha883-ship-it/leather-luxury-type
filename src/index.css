@@ -182,12 +182,122 @@
   body.atelier-cursor-active,
   body.atelier-cursor-active button,
   body.atelier-cursor-active a,
-  body.atelier-cursor-active input,
   body.atelier-cursor-active select,
-  body.atelier-cursor-active textarea,
   body.atelier-cursor-active [role="button"] {
     cursor: none !important;
   }
+
+  /* Keep native precision cursors for sliders and text inputs so dragging & editing are crystal clear */
+  body.atelier-cursor-active input[type="range"] {
+    cursor: grab !important;
+  }
+  body.atelier-cursor-active input[type="range"]:active {
+    cursor: grabbing !important;
+  }
+  body.atelier-cursor-active input[type="text"],
+  body.atelier-cursor-active input[type="tel"],
+  body.atelier-cursor-active input[type="email"],
+  body.atelier-cursor-active input[type="number"],
+  body.atelier-cursor-active textarea {
+    cursor: text !important;
+  }
+}
+
+/* Luxury Range Slider Component */
+.luxury-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #18100C;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.luxury-range-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: grab;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #D4AF37 var(--slider-fill, 0%), #18100C var(--slider-fill, 0%));
+}
+
+.luxury-range-slider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: grab;
+  border-radius: 9999px;
+  background: #18100C;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.luxury-range-slider::-moz-range-progress {
+  background: linear-gradient(90deg, #E5C365, #D4AF37);
+  border-radius: 9999px;
+  height: 8px;
+}
+
+.luxury-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFF8E7 0%, #E5C365 40%, #D4AF37 70%, #99781B 100%);
+  border: 2px solid #FFFFFF;
+  cursor: grab;
+  margin-top: -7px;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.7), 0 2px 6px rgba(0, 0, 0, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.luxury-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  box-shadow: 0 0 16px rgba(229, 195, 101, 0.95), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.luxury-range-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.25);
+  box-shadow: 0 0 20px rgba(229, 195, 101, 1), 0 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+.luxury-range-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFF8E7 0%, #E5C365 40%, #D4AF37 70%, #99781B 100%);
+  border: 2px solid #FFFFFF;
+  cursor: grab;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.luxury-range-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.25);
+}
+
+/* Dedicated Elegant Scrollbar for the Live Order Summary Box */
+.custom-order-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-order-scrollbar::-webkit-scrollbar-track {
+  background: rgba(24, 16, 12, 0.6);
+  border-radius: 6px;
+}
+
+.custom-order-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.45);
+  border-radius: 6px;
+  border: 1px solid rgba(229, 195, 101, 0.3);
+}
+
+.custom-order-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.8);
 }
 
 /* Lenis smooth scrolling compatibility */

@@ -4,6 +4,7 @@ import { motion, useSpring, useMotionValue } from 'framer-motion';
 export const AtelierCursor: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isNativeInput, setIsNativeInput] = useState<boolean>(false);
   const [isPointerDevice, setIsPointerDevice] = useState<boolean>(false);
   const cursorRef = useRef<HTMLDivElement>(null);
 
@@ -35,15 +36,29 @@ export const AtelierCursor: React.FC = () => {
       mouseY.set(e.clientY);
       if (!isVisible) setIsVisible(true);
 
-      // Check if hovering over interactive clickable elements
+      // Check if hovering over native inputs (range slider, text fields)
       const target = e.target as HTMLElement | null;
       if (target) {
+        const isSlider = Boolean(
+          target.closest('input[type="range"]') || (target instanceof HTMLInputElement && target.type === 'range')
+        );
+        const isTextInput = Boolean(
+          target.closest('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea')
+        );
+
+        if (isSlider || isTextInput) {
+          setIsNativeInput(true);
+          setIsHovered(false);
+          return;
+        }
+
+        setIsNativeInput(false);
+
+        // Check if hovering over interactive clickable elements
         const isClickable = Boolean(
           target.closest('button') ||
           target.closest('a') ||
           target.closest('[role="button"]') ||
-          target.closest('input') ||
-          target.closest('textarea') ||
           target.closest('select') ||
           target.closest('.luxury-card') ||
           target.closest('.interactive-clickable') ||
@@ -78,7 +93,7 @@ export const AtelierCursor: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-9999 overflow-hidden">
+    <div className={`fixed inset-0 pointer-events-none z-9999 overflow-hidden transition-opacity duration-150 ${isNativeInput ? 'opacity-0' : 'opacity-100'}`}>
       {/* 1. Outer Ambient Trailing Ring with gold blur expansion on hover */}
       <motion.div
         ref={cursorRef}
