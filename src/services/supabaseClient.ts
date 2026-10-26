@@ -10,4 +10,8 @@ export {
   getLocalOrders,
   saveLocalOrders,
   SUPABASE_SQL_SETUP,
+  signInAdminWithSupabase,
+  signOutAdmin,
+  getAdminSession,
+  onAdminAuthStateChange,
 } from '../lib/supabaseClient';

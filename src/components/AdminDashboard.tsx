@@ -33,6 +33,9 @@ import {
   isSupabaseConfigured,
   subscribeToOrdersRealtime,
   SUPABASE_SQL_SETUP,
+  signOutAdmin,
+  getAdminSession,
+  onAdminAuthStateChange,
 } from '../services/supabaseClient';
 import {
   exportOrdersToCSV,
@@ -84,23 +87,63 @@ export const AdminDashboard: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
-  // Check existing session on mount
+  // Check existing session on mount (Supabase Auth first, then local fallback)
   useEffect(() => {
-    try {
-      const local = localStorage.getItem('luxe_admin_auth_session');
-      const session = sessionStorage.getItem('luxe_admin_auth_session');
-      const raw = local || session;
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // Valid if under 12 hours old
-        if (parsed.authenticated && Date.now() - parsed.timestamp < 12 * 60 * 60 * 1000) {
+    let mounted = true;
+
+    const checkExistingAuth = async () => {
+      // 1. Supabase Auth Session
+      try {
+        const session = await getAdminSession();
+        if (session?.user?.email && mounted) {
           setIsAuthenticated(true);
-          setAdminUser(parsed.user || 'admin');
+          setAdminUser(session.user.email);
+          return;
+        }
+      } catch (err) {
+        console.warn('[Admin] Failed checking Supabase session:', err);
+      }
+
+      // 2. Local Fallback Session (if valid under 12h)
+      try {
+        const local = localStorage.getItem('luxe_admin_auth_session');
+        const session = sessionStorage.getItem('luxe_admin_auth_session');
+        const raw = local || session;
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.authenticated && Date.now() - parsed.timestamp < 12 * 60 * 60 * 1000) {
+            if (mounted) {
+              setIsAuthenticated(true);
+              setAdminUser(parsed.user || 'admin');
+            }
+          }
+        }
+      } catch {
+        // ignore storage errors
+      }
+    };
+
+    checkExistingAuth();
+
+    // Listen to Supabase Auth state changes (sign in / sign out)
+    const authSub = onAdminAuthStateChange((event, session) => {
+      if (!mounted) return;
+      if (session?.user?.email) {
+        setIsAuthenticated(true);
+        setAdminUser(session.user.email);
+      } else if (event === 'SIGNED_OUT') {
+        const local = localStorage.getItem('luxe_admin_auth_session');
+        const sess = sessionStorage.getItem('luxe_admin_auth_session');
+        if (!local && !sess) {
+          setIsAuthenticated(false);
         }
       }
-    } catch {
-      setIsAuthenticated(false);
-    }
+    });
+
+    return () => {
+      mounted = false;
+      authSub.unsubscribe();
+    };
   }, []);
 
   // Load orders from Supabase & Local Database
@@ -132,11 +175,16 @@ export const AdminDashboard: React.FC = () => {
   }, [isAuthenticated]);
 
   // Log out helper
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOutAdmin();
+    } catch (err) {
+      console.warn('[Admin] Supabase signOut error:', err);
+    }
     localStorage.removeItem('luxe_admin_auth_session');
     sessionStorage.removeItem('luxe_admin_auth_session');
     setIsAuthenticated(false);
-    setNotification({ type: 'info', message: 'You have been securely logged out.' });
+    setNotification({ type: 'info', message: 'You have been securely signed out of Supabase Auth.' });
   };
 
   // Copy helper with feedback
@@ -363,7 +411,7 @@ export const AdminDashboard: React.FC = () => {
         onAuthenticated={(user) => {
           setIsAuthenticated(true);
           setAdminUser(user);
-          setNotification({ type: 'success', message: `Welcome back, ${user}. Master session unlocked.` });
+          setNotification({ type: 'success', message: `Welcome back, ${user}. Supabase Auth session active.` });
           setTimeout(() => setNotification(null), 4000);
         }}
       />
@@ -436,7 +484,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center gap-1 pl-2 border-l border-[#D4AF37]/20">
               <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#241710] border border-[#D4AF37]/30 text-xs text-[#FDFBF7]">
                 <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
-                <span className="font-semibold capitalize">{adminUser}</span>
+                <span className="font-semibold text-xs max-w-[220px] truncate" title={adminUser}>{adminUser}</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -1605,6 +1653,13 @@ export const AdminDashboard: React.FC = () => {
                       {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedCode ? 'Copied!' : 'Copy SQL'}</span>
                     </button>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-[#140D08] border border-[#D4AF37]/30 text-[#D4C5B9] space-y-1.5">
+                    <span className="font-bold text-[#D4AF37] block">Admin Authentication Credentials:</span>
+                    <p>
+                      The <code>/admin</code> route authenticates directly with Supabase Auth. To add admin accounts, go to your <strong>Supabase Dashboard &gt; Authentication &gt; Users</strong>, click <strong>Add user &gt; Create user</strong>, and register your email and password.
+                    </p>
                   </div>
 
                   <p className="text-[#A69282]">

@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient, type User, type Session } from '@supabase/supabase-js';
 import type { OrderRecord, OrderStatus } from '../types';
 
 // Sanitize Supabase project URL (handles trailing slashes and accidental /rest/v1)
@@ -47,6 +47,91 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
       },
     })
   : null;
+
+/**
+ * Sign in Admin using Supabase Auth (email + password)
+ */
+export const signInAdminWithSupabase = async (
+  email: string,
+  password: string
+): Promise<{ success: boolean; user?: User; session?: Session; error?: string }> => {
+  if (!supabase) {
+    return {
+      success: false,
+      error: 'Supabase is not configured. Please verify your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.',
+    };
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    if (!data.user) {
+      return { success: false, error: 'No user record returned from Supabase.' };
+    }
+
+    return {
+      success: true,
+      user: data.user,
+      session: data.session ?? undefined,
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || 'Network or unexpected error while connecting to Supabase Auth.',
+    };
+  }
+};
+
+/**
+ * Sign out the currently authenticated Supabase user
+ */
+export const signOutAdmin = async (): Promise<void> => {
+  if (!supabase) return;
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    console.warn('[Supabase Auth] Sign out error:', err);
+  }
+};
+
+/**
+ * Get active Supabase Auth session
+ */
+export const getAdminSession = async (): Promise<Session | null> => {
+  if (!supabase) return null;
+  try {
+    const { data } = await supabase.auth.getSession();
+    return data.session;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Subscribe to Supabase Auth state changes
+ */
+export const onAdminAuthStateChange = (
+  callback: (event: string, session: Session | null) => void
+): { unsubscribe: () => void } => {
+  if (!supabase) {
+    return { unsubscribe: () => {} };
+  }
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    callback(event, session);
+  });
+  return {
+    unsubscribe: () => {
+      data.subscription.unsubscribe();
+    },
+  };
+};
 
 /**
  * Local storage order helpers ensuring zero data loss in development or offline mode
