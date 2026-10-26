@@ -66,8 +66,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Dynamic Route Normalizer
   const normalizePath = (path: string): string => {
-    const lower = (path || '').toLowerCase().trim();
-    if (lower === '/admin' || lower.startsWith('/admin')) {
+    let lower = (path || '').toLowerCase().trim();
+    if (typeof window !== 'undefined' && (!lower || lower === '/')) {
+      const hash = window.location.hash.toLowerCase().trim();
+      if (hash.includes('admin')) {
+        lower = '/admin';
+      } else if (hash.includes('custom-order') || hash.includes('checkout')) {
+        lower = '/custom-order';
+      }
+    }
+
+    if (lower === '/admin' || lower.startsWith('/admin') || lower === 'admin') {
       return '/admin';
     }
     if (lower.startsWith('/catalog/')) {
@@ -84,19 +93,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Client Routing State
   const [currentPath, setCurrentPath] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return normalizePath(window.location.pathname);
+      const hash = window.location.hash.toLowerCase().trim();
+      const initial = hash.includes('admin') ? '/admin' : window.location.pathname;
+      return normalizePath(initial);
     }
     return '/';
   });
 
   useEffect(() => {
-    const handlePopState = () => {
+    const handleRouteChange = () => {
       if (typeof window !== 'undefined') {
-        setCurrentPath(normalizePath(window.location.pathname));
+        const hash = window.location.hash.toLowerCase().trim();
+        const current = hash.includes('admin') ? '/admin' : window.location.pathname;
+        setCurrentPath(normalizePath(current));
       }
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('hashchange', handleRouteChange);
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('hashchange', handleRouteChange);
+    };
   }, []);
 
   const navigateTo = (path: string) => {

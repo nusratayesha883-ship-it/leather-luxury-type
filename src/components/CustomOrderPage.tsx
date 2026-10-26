@@ -22,7 +22,6 @@ import {
   FileSpreadsheet,
   Eye,
   Copy,
-  ExternalLink,
   X,
   Loader2
 } from 'lucide-react';
@@ -1422,17 +1421,17 @@ export const CustomOrderPage: React.FC = () => {
                 </button>
 
                 <div className="flex flex-col sm:flex-row gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSubmittedOrder(null);
-                      navigateTo('/admin');
-                    }}
-                    className="flex-1 py-3 px-4 min-h-[44px] rounded-xl bg-[#18100C] hover:bg-[#2A1E17] text-[#E5C365] text-xs font-bold border border-[#D4AF37]/35 flex items-center justify-center gap-1.5 cursor-pointer"
+                  <a
+                    href={`https://wa.me/8801905206450?text=${encodeURIComponent(
+                      `Hello LuxeHide Atelier, I have placed an order ${submittedOrder?.order_id || ''}. Please verify and confirm production status.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-3 px-4 min-h-[44px] rounded-xl bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
                   >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>View in Admin Dashboard</span>
-                  </button>
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{language === 'BN' ? 'হোয়াটসঅ্যাপে ট্র্যাকিং নিশ্চিত করুন' : 'Confirm via WhatsApp'}</span>
+                  </a>
                   <button
                     type="button"
                     onClick={() => {

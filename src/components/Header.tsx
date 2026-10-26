@@ -152,17 +152,6 @@ export const Header: React.FC = () => {
             >
               {l(t.about)}
             </button>
-            <button
-              onClick={() => navigateTo('/admin')}
-              className={`transition-colors cursor-pointer whitespace-nowrap px-2.5 py-1 min-h-[36px] my-auto rounded-full text-xs border shrink-0 flex items-center ${
-                currentPath === '/admin'
-                  ? 'bg-[#D4AF37] text-[#170F0B] border-[#D4AF37] font-bold'
-                  : 'text-[#D4AF37] border-[#D4AF37]/35 hover:bg-[#2A1E17] hover:text-[#FDFBF7]'
-              }`}
-              title="Atelier Admin Order Dashboard"
-            >
-              {language === 'BN' ? 'অ্যাডমিন' : 'Admin'}
-            </button>
           </nav>
 
           {/* Right Action Bar - Adaptive layout preventing any collision & keeping hamburger always visible */}
@@ -387,16 +376,6 @@ export const Header: React.FC = () => {
                 className="text-left py-2.5 px-3 min-h-[44px] flex items-center rounded-xl hover:bg-[#2A1E17] hover:text-[#D4AF37] whitespace-nowrap cursor-pointer"
               >
                 {l(t.about)}
-              </button>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigateTo('/admin');
-                }}
-                className="text-left py-2.5 px-3 min-h-[44px] rounded-xl bg-[#2A1E17] text-[#D4AF37] hover:text-[#FDFBF7] font-bold whitespace-nowrap flex items-center justify-between cursor-pointer"
-              >
-                <span>{language === 'BN' ? 'অ্যাডমিন ড্যাশবোর্ড' : 'Admin Dashboard'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#E5C365]">Orders</span>
               </button>
             </div>
 
